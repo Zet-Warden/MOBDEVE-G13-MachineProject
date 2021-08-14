@@ -6,6 +6,8 @@ import android.os.CountDownTimer
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 
+import kotlinx.android.synthetic.main.activity_main.*
+
 class MainActivity : AppCompatActivity() {
     private lateinit var hideUITimer: CountDownTimer
     private lateinit var container: ConstraintLayout
@@ -15,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         hideSystemUI()
 
-        container = findViewById(R.id.cl_main)
+        container = cl_main
 
         //hides status and nav bar after a certain time
         hideUITimer = object : CountDownTimer(1500, 1000) {
