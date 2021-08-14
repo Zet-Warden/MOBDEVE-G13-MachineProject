@@ -14,7 +14,8 @@ by Group 13
 - [ ] layout for user info screen
 - [ ] layout for map screen
 - [ ] layout for appointment screen
-- [ ] OTP functionality
+- [ ] OTP/login functionality
 - [ ] online database
+- [ ] user info functionality
 - [ ] google maps functionality
 - [ ] calendar functionality
