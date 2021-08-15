@@ -9,7 +9,7 @@ by Group 13
 ## To Do (for developers)
 - [x] prototype UI
 - [x] layout for login screen
-- [ ] layout for otp screen
+- [x] layout for otp screen
 - [ ] layout for home screen
 - [ ] layout for user info screen
 - [ ] layout for map screen
