@@ -2,11 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_main"
+    android:id="@+id/clMainContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_background"
     tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tvDidNotReceiveLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/didnt_receive_label"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -34,7 +45,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tv_login"
+        android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -62,19 +73,8 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".85" />
 
-    <TextView
-        android:id="@+id/tvDidNotReceiveLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/montserrat"
-        android:text="@string/didnt_receive_label"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit1" />
-
     <Button
-        android:id="@+id/btn_send_otp"
+        android:id="@+id/btnSendOTP"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
@@ -85,9 +85,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel"
-        app:layout_constraintVertical_bias="0.705" />
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout" />
 
     <TextView
         android:id="@+id/tvResendOTP"
@@ -98,7 +96,7 @@
         android:textColor="#0EDFC6"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/gl_end"
-        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel" />
+        tools:layout_editor_absoluteY="454dp" />
 
     <TextView
         android:id="@+id/tvOTPDigit1"
@@ -107,7 +105,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_login"
+        app:layout_constraintTop_toBottomOf="@+id/tvLogin"
         style="@style/otp_digit" />
 
     <TextView

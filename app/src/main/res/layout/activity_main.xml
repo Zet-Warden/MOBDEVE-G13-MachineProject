@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_main"
+    android:id="@+id/clMainContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_background"
@@ -34,7 +34,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tv_login"
+        android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toStartOf="@+id/gl_end"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_login" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_start"
@@ -75,7 +75,7 @@
         app:layout_constraintGuide_percent=".85" />
 
     <TextView
-        android:id="@+id/tvDidNotReceiveLabel"
+        android:id="@+id/tvMobileNumberLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
@@ -85,7 +85,7 @@
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <TextView
-        android:id="@+id/tv_area_code"
+        android:id="@+id/tvAreaCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -96,19 +96,19 @@
         app:layout_constraintStart_toStartOf="@+id/gl_start" />
 
     <TextView
-        android:id="@+id/tv_mobile_number_input"
+        android:id="@+id/tvMobileNumberInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
         android:text="917 012 3456"
         android:textSize="30sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_area_code"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tvAreaCode"
         app:layout_constraintEnd_toStartOf="@+id/gl_end"
         app:layout_constraintHorizontal_bias="0.731"
-        app:layout_constraintStart_toEndOf="@+id/tv_area_code" />
+        app:layout_constraintStart_toEndOf="@+id/tvAreaCode" />
 
     <Button
-        android:id="@+id/btn_send_otp"
+        android:id="@+id/btnSendOTP"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
@@ -120,7 +120,7 @@
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvMobileNumberLabel"
         app:layout_constraintVertical_bias="0.705" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

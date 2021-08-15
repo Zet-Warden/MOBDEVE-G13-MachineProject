@@ -1,23 +1,23 @@
+@file:Suppress("DEPRECATION")
+
 package com.mobdeve.s11.sy.jacob.machineproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
 
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var hideUITimer: CountDownTimer
-    private lateinit var container: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         hideSystemUI()
-
-        container = cl_main
 
         //hides status and nav bar after a certain time
         hideUITimer = object : CountDownTimer(1500, 1000) {
@@ -28,9 +28,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         //start timer
-        container.setOnClickListener {
+        clMainContainer.setOnClickListener {
             hideUITimer.cancel()
             hideUITimer.start()
+        }
+
+        btnSendOTP.setOnClickListener {
+            startActivity(Intent(this, OTPVerification::class.java))
         }
     }
 
