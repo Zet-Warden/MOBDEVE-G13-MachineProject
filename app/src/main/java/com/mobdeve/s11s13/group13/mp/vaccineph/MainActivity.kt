@@ -30,15 +30,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         UIHider(this, clMainContainer)
+        init()
+    }
 
-       toast = Toast.makeText(
+    //TODO: Refactor
+    private fun init() {
+        initSendOTPButton()
+        toast = Toast.makeText(
             this,
             "Don't forget to fill your mobile number before proceeding!",
             Toast.LENGTH_SHORT
         )
-        init()
-
-
         etMobileNumberInput.addTextChangedListener(object : TextWatcher {
             var flag = true
             var prevLength: Int? = 0
@@ -78,10 +80,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    private fun init() {
-        initSendOTPButton()
     }
 
     private fun initSendOTPButton() {
