@@ -12,9 +12,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_otp_verification.*
-import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
 
 class OTPVerification : AppCompatActivity() {
     private var listOfOTPDigits = mutableListOf<EditText>()
@@ -95,7 +93,7 @@ class OTPVerification : AppCompatActivity() {
             if(it.text.isEmpty())
                 return@isOTPDigitsCompletelyFilled false
         }
-        return true;
+        return true
     }
 
     private fun createKeyListenerForOTP(
