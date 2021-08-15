@@ -9,8 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MachineProjectTest">
-        <activity android:name="com.mobdeve.s11.sy.jacob.com.mobdeve.s11.g13.machineproject.otp_verification"></activity>
-        <activity android:name="com.mobdeve.s11.sy.jacob.com.mobdeve.s11.g13.machineproject.MainActivity">
+        <activity android:name="com.mobdeve.s11.sy.jacob.machineproject.OTPVerification" />
+        <activity android:name="com.mobdeve.s11.sy.jacob.machineproject.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
