@@ -75,7 +75,7 @@
         app:layout_constraintGuide_percent=".85" />
 
     <TextView
-        android:id="@+id/tv_mobile_number_label"
+        android:id="@+id/tvDidNotReceiveLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
@@ -120,7 +120,7 @@
         app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/tv_mobile_number_label"
+        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel"
         app:layout_constraintVertical_bias="0.705" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

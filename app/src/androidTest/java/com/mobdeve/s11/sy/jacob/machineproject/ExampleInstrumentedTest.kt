@@ -1,4 +1,4 @@
-package com.mobdeve.s11.sy.jacob.machineprojecttest
+package com.mobdeve.s11.sy.jacob.machineproject
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

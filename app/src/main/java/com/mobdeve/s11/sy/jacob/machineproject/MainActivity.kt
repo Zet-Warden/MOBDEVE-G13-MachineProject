@@ -1,4 +1,4 @@
-package com.mobdeve.s11.sy.jacob.machineprojecttest
+package com.mobdeve.s11.sy.jacob.machineproject
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

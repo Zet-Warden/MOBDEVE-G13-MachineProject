@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:letterSpacing="0.05"
+        android:text="VERIFY OTP"
+        android:textColor="#000000"
+        android:textSize="42sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".85" />
+
+    <TextView
+        android:id="@+id/tvDidNotReceiveLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/didnt_receive_label"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit1" />
+
+    <Button
+        android:id="@+id/btn_send_otp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="VERIFY"
+        android:textSize="24sp"
+        app:backgroundTint="#0EDFC6"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel"
+        app:layout_constraintVertical_bias="0.705" />
+
+    <TextView
+        android:id="@+id/tvResendOTP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/resend_otp"
+        android:textColor="#0EDFC6"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit1"
+        android:text="0"
+        app:layout_constraintEnd_toStartOf="@+id/tvOTPDigit2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_login"
+        style="@style/otp_digit" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit2"
+        style="@style/otp_digit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="0"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvOTPDigit3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit1"
+        app:layout_constraintTop_toTopOf="@+id/tvOTPDigit1" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit3"
+        style="@style/otp_digit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="0"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvOTPDigit4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit2"
+        app:layout_constraintTop_toTopOf="@+id/tvOTPDigit1" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit4"
+        style="@style/otp_digit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="0"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvOTPDigit5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit3"
+        app:layout_constraintTop_toTopOf="@+id/tvOTPDigit1" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit5"
+        style="@style/otp_digit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="0"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/tvOTPDigit6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit4"
+        app:layout_constraintTop_toTopOf="@+id/tvOTPDigit1" />
+
+    <TextView
+        android:id="@+id/tvOTPDigit6"
+        style="@style/otp_digit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="0"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit5"
+        app:layout_constraintTop_toTopOf="@+id/tvOTPDigit1" />
+
+    <View
+        android:id="@+id/hdOTPDigit1"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit1"
+        app:layout_constraintStart_toStartOf="@+id/tvOTPDigit1"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit1"
+        style="@style/hd_line_for_otp_digit" />
+
+    <View
+        android:id="@+id/hdOTPDigit2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit2"
+        app:layout_constraintStart_toStartOf="@+id/tvOTPDigit2"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit2" />
+
+    <View
+        android:id="@+id/hdOTPDigit3"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit3"
+        app:layout_constraintStart_toStartOf="@+id/tvOTPDigit3"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit3" />
+
+    <View
+        android:id="@+id/hdOTPDigit4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit4"
+        app:layout_constraintStart_toStartOf="@+id/tvOTPDigit4"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit4" />
+
+    <View
+        android:id="@+id/hdOTPDivider5"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit5"
+        app:layout_constraintStart_toStartOf="@+id/tvOTPDigit5"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit5" />
+
+    <View
+        android:id="@+id/hdOTPDivider6"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="@+id/tvOTPDigit6"
+        app:layout_constraintStart_toEndOf="@+id/tvOTPDigit5"
+        app:layout_constraintTop_toBottomOf="@+id/tvOTPDigit6" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
