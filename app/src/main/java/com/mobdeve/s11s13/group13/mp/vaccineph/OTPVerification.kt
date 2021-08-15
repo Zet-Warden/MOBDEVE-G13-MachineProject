@@ -9,10 +9,15 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_otp_verification.*
+import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
+import java.util.concurrent.TimeUnit
 
 class OTPVerification : AppCompatActivity() {
     private var listOfOTPDigits = mutableListOf<EditText>()
@@ -27,7 +32,7 @@ class OTPVerification : AppCompatActivity() {
         setContentView(R.layout.activity_otp_verification)
         UIHider(this, clMainContainer)
         initOTPDigits()
-        initResendOTP()
+        initResendOTPButton()
 
         verificationId =
             intent.getStringExtra(KeyEnum.KEY_OTP.name)!! // gets the otp that was sent to the mobile number, for verification purposes
@@ -43,26 +48,29 @@ class OTPVerification : AppCompatActivity() {
                 toast.cancel()
                 toast.show()
             } else {
-                var otp =
-                    etOTPDigit1.text.toString() +
-                            etOTPDigit2.text.toString() +
-                            etOTPDigit3.text.toString() +
-                            etOTPDigit4.text.toString() +
-                            etOTPDigit5.text.toString() +
-                            etOTPDigit6.text.toString()
-
-                var phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
-                FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
-                    .addOnSuccessListener {
-                        //should send phone number here to the other activity?
-                        startActivity(Intent(this, MainActivity::class.java)) //change destination activity
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(this@OTPVerification, "Invalid Code", Toast.LENGTH_SHORT).show()
-                    }
-
+                authenticate()
             }
         }
+    }
+
+    private fun authenticate() {
+        val otp =
+            etOTPDigit1.text.toString() +
+                    etOTPDigit2.text.toString() +
+                    etOTPDigit3.text.toString() +
+                    etOTPDigit4.text.toString() +
+                    etOTPDigit5.text.toString() +
+                    etOTPDigit6.text.toString()
+
+        val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
+        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+            .addOnSuccessListener {
+                //should send phone number here to the other activity?
+                startActivity(Intent(this, MainActivity::class.java)) //change destination activity
+            }
+            .addOnFailureListener {
+                Toast.makeText(this@OTPVerification, "Invalid Code", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun initOTPDigits() {
@@ -128,9 +136,29 @@ class OTPVerification : AppCompatActivity() {
         }
     }
 
-    private fun initResendOTP() {
+    private fun initResendOTPButton() {
         tvResendOTP.setOnClickListener{
-            TODO()
+            val mobileNumber = intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //get mobile number
+            val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
+
+                override fun onVerificationFailed(e: FirebaseException) {
+                    Toast.makeText(this@OTPVerification, "${e.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onCodeSent(newVerificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    verificationId = newVerificationId
+                }
+            }
+
+            val options = PhoneAuthOptions.newBuilder()
+                .setPhoneNumber(mobileNumber)
+                .setTimeout(60L, TimeUnit.SECONDS)
+                .setActivity(this)
+                .setCallbacks(callbacks)
+                .build()
+
+            PhoneAuthProvider.verifyPhoneNumber(options)
         }
     }
 

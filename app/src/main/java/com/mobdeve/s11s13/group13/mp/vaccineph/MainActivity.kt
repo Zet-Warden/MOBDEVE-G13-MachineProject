@@ -36,44 +36,8 @@ class MainActivity : AppCompatActivity() {
             "Don't forget to fill your mobile number before proceeding!",
             Toast.LENGTH_SHORT
         )
+        init()
 
-        btnSendOTP.setOnClickListener {
-            if (etMobileNumberInput.text.length != 12) {
-                toast.cancel()
-                toast.show()
-            } else {
-
-                val mobileNumber = "+63" + etMobileNumberInput.text.toString() //adding country code to mobile number
-
-                val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                    override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                        //do nothing
-                    }
-
-                    override fun onVerificationFailed(e: FirebaseException) {
-                        Toast.makeText(this@MainActivity, "${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-
-                    override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-                        val intent = Intent(this@MainActivity, OTPVerification::class.java).apply {
-                            putExtra(KeyEnum.KEY_MOBILE_NUMBER.name, mobileNumber) //mobile number
-                            putExtra(KeyEnum.KEY_OTP.name, verificationId) //otp code
-                        }
-
-                        startActivity(intent) // go to verify otp activity
-                    }
-                }
-
-                val options = PhoneAuthOptions.newBuilder()
-                    .setPhoneNumber(mobileNumber)
-                    .setTimeout(60L, TimeUnit.SECONDS)
-                    .setActivity(this)
-                    .setCallbacks(callbacks)
-                    .build()
-
-                PhoneAuthProvider.verifyPhoneNumber(options)
-            }
-        }
 
         etMobileNumberInput.addTextChangedListener(object : TextWatcher {
             var flag = true
@@ -114,5 +78,51 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    private fun init() {
+        initSendOTPButton()
+    }
+
+    private fun initSendOTPButton() {
+        btnSendOTP.setOnClickListener {
+            if (etMobileNumberInput.text.length != 12) {
+                toast.cancel()
+                toast.show()
+            } else {
+                sendOTP()
+            }
+        }
+    }
+
+    private fun sendOTP() {
+        val mobileNumber = "+63" + etMobileNumberInput.text.toString() //adding country code to mobile number
+        val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                //do nothing
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                Toast.makeText(this@MainActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                val intent = Intent(this@MainActivity, OTPVerification::class.java).apply {
+                    putExtra(KeyEnum.KEY_MOBILE_NUMBER.name, mobileNumber) //mobile number
+                    putExtra(KeyEnum.KEY_OTP.name, verificationId) //otp code
+                }
+
+                startActivity(intent) // go to verify otp activity
+            }
+        }
+
+        val options = PhoneAuthOptions.newBuilder()
+            .setPhoneNumber(mobileNumber)
+            .setTimeout(60L, TimeUnit.SECONDS)
+            .setActivity(this)
+            .setCallbacks(callbacks)
+            .build()
+
+        PhoneAuthProvider.verifyPhoneNumber(options)
     }
 }
