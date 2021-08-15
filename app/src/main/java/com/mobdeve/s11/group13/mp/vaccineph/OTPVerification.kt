@@ -96,7 +96,7 @@ class OTPVerification : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(editable: Editable) {
-                if (editable.length == 1) //focus on nextView, only if the user has field up the current OTP digit
+                if (editable.length == 1) //focus on nextView, only if the user has filled up the current OTP digit
                     nextView?.requestFocus()
             }
         }
