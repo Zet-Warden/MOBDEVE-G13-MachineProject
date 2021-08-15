@@ -1,4 +1,4 @@
-package com.mobdeve.s11.sy.jacob.machineproject
+package com.mobdeve.s11.group13.mp.vaccineph
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.mobdeve.s11.sy.jacob.machineproject
+package com.mobdeve.s11.group13.mp.vaccineph
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
