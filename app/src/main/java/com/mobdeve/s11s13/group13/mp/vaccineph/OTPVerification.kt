@@ -9,18 +9,28 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.android.synthetic.main.activity_otp_verification.*
-
 
 class OTPVerification : AppCompatActivity() {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var toast : Toast
+
+    private lateinit var verificationId : String
+
+    //private var forceResendToken : PhoneAuthProvider.ForceResendingToken? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp_verification)
         UIHider(this, clMainContainer)
         initOTPDigits()
+        initResendOTP()
+
+        verificationId =
+            intent.getStringExtra(KeyEnum.KEY_OTP.name)!! // gets the otp that was sent to the mobile number, for verification purposes
 
         toast = Toast.makeText(
             this,
@@ -33,7 +43,24 @@ class OTPVerification : AppCompatActivity() {
                 toast.cancel()
                 toast.show()
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
+                var otp =
+                    etOTPDigit1.text.toString() +
+                            etOTPDigit2.text.toString() +
+                            etOTPDigit3.text.toString() +
+                            etOTPDigit4.text.toString() +
+                            etOTPDigit5.text.toString() +
+                            etOTPDigit6.text.toString()
+
+                var phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
+                FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+                    .addOnSuccessListener {
+                        //should send phone number here to the other activity?
+                        startActivity(Intent(this, MainActivity::class.java)) //change destination activity
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this@OTPVerification, "Invalid Code", Toast.LENGTH_SHORT).show()
+                    }
+
             }
         }
     }
@@ -98,6 +125,12 @@ class OTPVerification : AppCompatActivity() {
                 if (editable.length == 1) //focus on nextView, only if the user has filled up the current OTP digit
                     nextView?.requestFocus()
             }
+        }
+    }
+
+    private fun initResendOTP() {
+        tvResendOTP.setOnClickListener{
+            TODO()
         }
     }
 
