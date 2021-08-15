@@ -21,10 +21,10 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     private lateinit var toast : Toast
 
-    //private var resendToken : PhoneAuthProvider.ForceResendingToken?= null
-    //private var mCallbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
-    //private var mVerificationId : String?= null
-    //private lateinit var firebaseAuth : FirebaseAuth
+    private var resendToken : PhoneAuthProvider.ForceResendingToken?= null
+    private var mCallbacks : PhoneAuthProvider.OnVerificationStateChangedCallbacks? = null
+    private var mVerificationId : String?= null
+    private lateinit var firebaseAuth : FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
