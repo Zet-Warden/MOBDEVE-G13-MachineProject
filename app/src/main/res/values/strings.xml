@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Machine Project Test</string>
+    <string name="PInfo">PERSONAL INFORMATION</string>
 </resources>
