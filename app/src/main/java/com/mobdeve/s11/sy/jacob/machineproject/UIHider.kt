@@ -12,7 +12,7 @@ import android.view.View
  * then hides the System status and navigation bar again
  *
  * Parameters:
- * app : AppCompatActivity - the activity that will hide the System UI
+ * app : Activity - the activity that will hide the System UI
  * clMainContainer : View - the main container of the activity
  */
 class UIHider(
