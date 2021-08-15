@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
 
 class OTPVerification : AppCompatActivity() {
     private var listOfOTPDigits = mutableListOf<EditText>()
+    private lateinit var toast : Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,17 +23,19 @@ class OTPVerification : AppCompatActivity() {
         UIHider(this, clMainContainer)
         initOTPDigits()
 
+        toast = Toast.makeText(
+            this,
+            "Don't forget to fill your OTP before verifying!",
+            Toast.LENGTH_SHORT
+        )
+
         btnVerifyOTP.setOnClickListener {
             if (!isOTPDigitsCompletelyFilled()) {
-                Toast.makeText(
-                    this,
-                    "Don't forget to fill your OTP before verifying!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast.cancel()
+                toast.show()
             } else {
                 startActivity(Intent(this, MainActivity::class.java))
             }
-
         }
     }
 

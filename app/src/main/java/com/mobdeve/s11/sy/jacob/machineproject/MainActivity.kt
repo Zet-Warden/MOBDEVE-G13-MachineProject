@@ -13,18 +13,23 @@ import java.lang.StringBuilder
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var toast : Toast
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         UIHider(this, clMainContainer)
 
+       toast = Toast.makeText(
+            this,
+            "Don't forget to fill your mobile number before proceeding!",
+            Toast.LENGTH_SHORT
+        )
+
         btnSendOTP.setOnClickListener {
             if (etMobileNumberInput.text.length != 12) {
-                Toast.makeText(
-                    this,
-                    "Don't forget to fill your mobile number before proceeding!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                toast.cancel()
+                toast.show()
             } else {
                 startActivity(Intent(this, OTPVerification::class.java))
             }
