@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.mobdeve.s11.group13.mp.vaccineph
+package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

@@ -1,4 +1,4 @@
-package com.mobdeve.s11.group13.mp.vaccineph
+package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
