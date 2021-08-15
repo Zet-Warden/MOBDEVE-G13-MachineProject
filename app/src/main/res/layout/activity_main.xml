@@ -42,7 +42,7 @@
         android:letterSpacing="0.05"
         android:text="LOGIN"
         android:textColor="#000000"
-        android:textSize="42sp"
+        android:textSize="38sp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,14 +65,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.13" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/gl_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.87" />
 
     <TextView
         android:id="@+id/tvMobileNumberLabel"
@@ -121,7 +121,9 @@
         android:background="@android:drawable/screen_background_light_transparent"
         android:fontFamily="@font/roboto_mono_medium"
         android:hint="000 000 0000"
+        android:digits="0123456789 "
         android:inputType="phone"
+        android:singleLine="true"
         android:maxLength="12"
         android:textSize="28sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tvAreaCode"

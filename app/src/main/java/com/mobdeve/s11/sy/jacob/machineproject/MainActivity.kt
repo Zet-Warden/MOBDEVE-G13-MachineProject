@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.StringBuilder
 
@@ -18,7 +19,15 @@ class MainActivity : AppCompatActivity() {
         UIHider(this, clMainContainer)
 
         btnSendOTP.setOnClickListener {
-            startActivity(Intent(this, OTPVerification::class.java))
+            if (etMobileNumberInput.text.length != 12) {
+                Toast.makeText(
+                    this,
+                    "Don't forget to fill your mobile number before proceeding!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                startActivity(Intent(this, OTPVerification::class.java))
+            }
         }
 
         etMobileNumberInput.addTextChangedListener(object : TextWatcher {
