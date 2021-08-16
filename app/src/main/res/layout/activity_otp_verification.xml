@@ -94,6 +94,8 @@
         android:id="@+id/tvResendOTP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
         android:fontFamily="@font/montserrat"
         android:text="@string/resend_otp"
         android:textColor="#0EDFC6"

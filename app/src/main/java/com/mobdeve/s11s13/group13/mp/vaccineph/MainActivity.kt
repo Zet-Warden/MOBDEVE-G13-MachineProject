@@ -87,6 +87,8 @@ class MainActivity : AppCompatActivity() {
             if (etMobileNumberInput.text.length != 12) {
                 toast.cancel()
                 toast.show()
+                val intent = Intent(this@MainActivity, OTPVerification::class.java)
+                startActivity(intent)
             } else {
                 sendOTP()
             }

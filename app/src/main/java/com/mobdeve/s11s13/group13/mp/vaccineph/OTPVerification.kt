@@ -27,6 +27,7 @@ class OTPVerification : AppCompatActivity() {
 
     //private var forceResendToken : PhoneAuthProvider.ForceResendingToken? = null
 
+    //TODO: Refactor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp_verification)
