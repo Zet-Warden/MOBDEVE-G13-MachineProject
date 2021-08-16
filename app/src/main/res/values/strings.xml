@@ -4,7 +4,14 @@
     <string name="resend_otp">Resend OTP</string>
 
     <string name="PInfo">PERSONAL INFORMATION</string>
-    
+    <string name="general_guidelines">
+        Keep your mask on at all times.\n
+        Don\'t touch your mask once it\'s on and properly fitted.\n
+        Keep at least 1 metre distance between yourself and others.\n
+        Sanitize or wash your hands after touching door handles, surfaces or furniture.\n
+        Don’t touch your face.\n
+    </string>
+
     <string-array name="sex_selection">
         <item>Male</item>
         <item>Female</item>
