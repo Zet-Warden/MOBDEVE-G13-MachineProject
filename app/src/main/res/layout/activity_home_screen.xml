@@ -44,27 +44,11 @@
         android:id="@+id/rvHomeScreen"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnCheckIn"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/hdNavBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivBlueBanner" />
-
-    <Button
-        android:id="@+id/btnCheckIn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:text="CHECK IN"
-        android:textSize="24sp"
-        app:backgroundTint="#0EDFC6"
-        app:cornerRadius="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/hdNavBar"
-        app:layout_constraintEnd_toEndOf="@+id/btnLocation"
-        app:layout_constraintStart_toEndOf="@+id/btnHome" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/hgBottom"
