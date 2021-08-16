@@ -4,4 +4,26 @@
     <string name="resend_otp">Resend OTP</string>
 
     <string name="PInfo">PERSONAL INFORMATION</string>
+    
+    <string-array name="sex_selection">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="priority_selection">
+        <item>A1</item>
+        <item>A2</item>
+        <item>A3</item>
+        <item>A4</item>
+        <item>A5</item>
+
+        <item>B1</item>
+        <item>B2</item>
+        <item>B3</item>
+        <item>B4</item>
+        <item>B5</item>
+        <item>B6</item>
+
+        <item>C</item>
+    </string-array>
 </resources>
