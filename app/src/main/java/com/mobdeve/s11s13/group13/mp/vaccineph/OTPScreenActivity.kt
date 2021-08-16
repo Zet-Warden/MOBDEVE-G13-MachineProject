@@ -13,18 +13,16 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewRefocuser
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_otp_verification.*
-import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
+import kotlinx.android.synthetic.main.activity_otp_screen.*
 import java.util.concurrent.TimeUnit
 
-class OTPVerificationActivity : AppCompatActivity(), ViewRefocuser {
+class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var verificationId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_otp_verification)
+        setContentView(R.layout.activity_otp_screen)
         init()
     }
 
@@ -83,7 +81,7 @@ class OTPVerificationActivity : AppCompatActivity(), ViewRefocuser {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
                 override fun onVerificationFailed(e: FirebaseException) {
-                    Toast.makeText(this@OTPVerificationActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@OTPScreenActivity, "${e.message}", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onCodeSent(

@@ -7,15 +7,15 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_user_screen.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ProfileActivity : AppCompatActivity() {
+class UserScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.activity_user_screen)
         init()
     }
 
