@@ -18,7 +18,7 @@ import android.view.View
 class UIHider(
     private val app: Activity,
     clMainContainer: View
-) : CountDownTimer(1250, 1000) { //set wait time to 1.5s when user opts to make the status and navigation bar appear again
+) : CountDownTimer(1000, 1000) { //set wait time to 1.5s when user opts to make the status and navigation bar appear again
 
     init {
         hideSystemUI()

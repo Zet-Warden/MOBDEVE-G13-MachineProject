@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -23,6 +24,20 @@ class ProfileActivity : AppCompatActivity() {
         initBirthdayCalendarDialog()
         initSexComboBox()
         initPriorityGroupComboBox()
+        initSaveButton()
+    }
+
+    private fun initSaveButton() {
+        val toast = Toast.makeText(this, "Please enter information for all fields.", Toast.LENGTH_SHORT)
+
+        btnSave.setOnClickListener {
+            if(isEverythingFilledUp()) {
+                println(actvSex.text)
+                println(actvPriorityGroup.text)
+            } else {
+                toast.show()
+            }
+        }
     }
 
     private fun initBirthdayCalendarDialog() {
@@ -58,5 +73,14 @@ class ProfileActivity : AppCompatActivity() {
         val priorityGroups = resources.getStringArray(R.array.priority_selection)
         val priorityGroupArrayAdapter = ArrayAdapter(this, R.layout.dropdown_item, priorityGroups)
         actvPriorityGroup.setAdapter(priorityGroupArrayAdapter)
+    }
+
+    private fun isEverythingFilledUp() : Boolean {
+        return etFirstName.text.isNotBlank() &&
+                etLastName.text.isNotBlank() &&
+                etBirthday.text.isNotBlank() &&
+                actvSex.text.isNotBlank() &&
+                actvPriorityGroup.text.isNotBlank() &&
+                etAddress.text.isNotBlank()
     }
 }
