@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.mobdeve.s11s13.group13.mp.vaccineph
+package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
 import android.app.Activity
 import android.os.CountDownTimer

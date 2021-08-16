@@ -3,10 +3,6 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.KeyEvent
-import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.FirebaseException
@@ -14,64 +10,29 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewRefocuser
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_otp_verification.*
 import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
 import java.util.concurrent.TimeUnit
 
-class OTPVerification : AppCompatActivity() {
+class OTPVerification : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
-    private lateinit var toast : Toast
+    private lateinit var verificationId: String
 
-    private lateinit var verificationId : String
-
-    //private var forceResendToken : PhoneAuthProvider.ForceResendingToken? = null
-
-    //TODO: Refactor
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp_verification)
+        init()
+    }
+
+    private fun init() {
         UIHider(this, clMainContainer)
         initOTPDigits()
         initResendOTPButton()
-
-        verificationId =
-            intent.getStringExtra(KeyEnum.KEY_OTP.name)!! // gets the otp that was sent to the mobile number, for verification purposes
-
-        toast = Toast.makeText(
-            this,
-            "Don't forget to fill your OTP before verifying!",
-            Toast.LENGTH_SHORT
-        )
-
-        btnVerifyOTP.setOnClickListener {
-            if (!isOTPDigitsCompletelyFilled()) {
-                toast.cancel()
-                toast.show()
-            } else {
-                authenticate()
-            }
-        }
-    }
-
-    private fun authenticate() {
-        val otp =
-            etOTPDigit1.text.toString() +
-                    etOTPDigit2.text.toString() +
-                    etOTPDigit3.text.toString() +
-                    etOTPDigit4.text.toString() +
-                    etOTPDigit5.text.toString() +
-                    etOTPDigit6.text.toString()
-
-        val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
-        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
-            .addOnSuccessListener {
-                //should send phone number here to the other activity?
-                startActivity(Intent(this, MainActivity::class.java)) //change destination activity
-            }
-            .addOnFailureListener {
-                Toast.makeText(this@OTPVerification, "Invalid Code", Toast.LENGTH_SHORT).show()
-            }
+        initBtnVerifyOTP()
     }
 
     private fun initOTPDigits() {
@@ -97,49 +58,27 @@ class OTPVerification : AppCompatActivity() {
         etOTPDigit6.setOnKeyListener(createKeyListenerForOTP(etOTPDigit6, etOTPDigit5))
     }
 
-    private fun isOTPDigitsCompletelyFilled() : Boolean {
-        listOfOTPDigits.forEach {
-            if(it.text.isEmpty())
-                return@isOTPDigitsCompletelyFilled false
-        }
-        return true
-    }
+    private fun initBtnVerifyOTP() {
+        val invalidToast = Toast.makeText(
+            this,
+            "InvalidCode",
+            Toast.LENGTH_SHORT
+        )
 
-    private fun createKeyListenerForOTP(
-        currentView: EditText,
-        previousView: EditText?
-    ): View.OnKeyListener {
-        return object : View.OnKeyListener {
-            override fun onKey(p0: View?, keyCode: Int, event: KeyEvent?): Boolean {
-                if (event!!.action == KeyEvent.ACTION_DOWN &&
-                    keyCode == KeyEvent.KEYCODE_DEL &&
-                    currentView.text.isEmpty()
-                ) {
-                    //if current is empty then previous OTP digit will also be deleted
-                    previousView?.text = null
-                    previousView?.requestFocus()
-                    return true
-                }
-                return false
-            }
-        }
-    }
-
-    private fun createTextWatcherForOTP(nextView: View?): TextWatcher {
-        return object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(editable: Editable) {
-                if (editable.length == 1) //focus on nextView, only if the user has filled up the current OTP digit
-                    nextView?.requestFocus()
+        verificationId = intent.getStringExtra(KeyEnum.KEY_OTP.name)!! // gets the otp that was sent
+        btnVerifyOTP.setOnClickListener {
+            if (!isOTPDigitsCompletelyFilled()) {
+                invalidToast.show()
+            } else {
+                authenticate(invalidToast)
             }
         }
     }
 
     private fun initResendOTPButton() {
-        tvResendOTP.setOnClickListener{
-            val mobileNumber = intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //get mobile number
+        tvResendOTP.setOnClickListener {
+            val mobileNumber =
+                intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //get mobile number
             val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
@@ -147,7 +86,10 @@ class OTPVerification : AppCompatActivity() {
                     Toast.makeText(this@OTPVerification, "${e.message}", Toast.LENGTH_SHORT).show()
                 }
 
-                override fun onCodeSent(newVerificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                override fun onCodeSent(
+                    newVerificationId: String,
+                    token: PhoneAuthProvider.ForceResendingToken
+                ) {
                     verificationId = newVerificationId
                 }
             }
@@ -163,5 +105,31 @@ class OTPVerification : AppCompatActivity() {
         }
     }
 
+    private fun authenticate(errorToast: Toast) {
+        val otp =
+            etOTPDigit1.text.toString() +
+                    etOTPDigit2.text.toString() +
+                    etOTPDigit3.text.toString() +
+                    etOTPDigit4.text.toString() +
+                    etOTPDigit5.text.toString() +
+                    etOTPDigit6.text.toString()
+
+        val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
+        FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
+            .addOnSuccessListener {
+                startActivity(Intent(this, MainActivity::class.java)) //change destination activity
+            }
+            .addOnFailureListener {
+                errorToast.show()
+            }
+    }
+
+    private fun isOTPDigitsCompletelyFilled(): Boolean {
+        listOfOTPDigits.forEach {
+            if (it.text.isEmpty())
+                return@isOTPDigitsCompletelyFilled false
+        }
+        return true
+    }
 }
 
