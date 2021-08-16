@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_otp_verification.*
 import kotlinx.android.synthetic.main.activity_otp_verification.clMainContainer
 import java.util.concurrent.TimeUnit
 
-class OTPVerification : AppCompatActivity(), ViewRefocuser {
+class OTPVerificationActivity : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var verificationId: String
 
@@ -83,7 +83,7 @@ class OTPVerification : AppCompatActivity(), ViewRefocuser {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
                 override fun onVerificationFailed(e: FirebaseException) {
-                    Toast.makeText(this@OTPVerification, "${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@OTPVerificationActivity, "${e.message}", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onCodeSent(
