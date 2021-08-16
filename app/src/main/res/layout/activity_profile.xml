@@ -7,7 +7,7 @@
     tools:context=".HomeScreenActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ivBlueBanner"
         android:layout_width="0dp"
         android:layout_height="55dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -16,7 +16,7 @@
         app:srcCompat="@drawable/login_background" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/clLogoGroup"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="5dp"
@@ -128,7 +128,7 @@
         app:layout_constraintEnd_toStartOf="@+id/gl_right"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="@+id/gl_left"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/ivBlueBanner" />
 
     <EditText
         android:id="@+id/etUS_gName"

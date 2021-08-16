@@ -9,7 +9,7 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/clLogoGroup"
         android:layout_width="240dp"
         android:layout_height="240dp"
         android:layout_marginTop="32dp"
@@ -46,7 +46,7 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/clLogoGroup" />
 
     <View
         android:id="@+id/divider"
@@ -106,9 +106,9 @@
         app:backgroundTint="#0EDFC6"
         app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="@+id/clLogoGroup"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/clLogoGroup"
         app:layout_constraintTop_toBottomOf="@+id/tvMobileNumberLabel"
         app:layout_constraintVertical_bias="0.55" />
 
