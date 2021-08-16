@@ -117,7 +117,8 @@ class OTPVerification : AppCompatActivity(), ViewRefocuser {
         val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
-                startActivity(Intent(this, MainActivity::class.java)) //change destination activity
+                //TODO: start home page activity
+                startActivity(Intent(this, MainActivity::class.java))
             }
             .addOnFailureListener {
                 errorToast.show()
