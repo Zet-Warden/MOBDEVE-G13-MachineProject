@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clMainContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tvDidNotReceiveLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/didnt_receive_label"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit1" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/circle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvVerify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:letterSpacing="0.05"
+        android:text="VERIFY OTP"
+        android:textColor="#000000"
+        android:textSize="38sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".85" />
+
+    <Button
+        android:id="@+id/btnVerifyOTP"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
+        android:text="VERIFY"
+        android:textSize="24sp"
+        app:backgroundTint="#0EDFC6"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel"
+        app:layout_constraintVertical_bias="0.553" />
+
+    <TextView
+        android:id="@+id/tvResendOTP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/montserrat"
+        android:text="@string/resend_otp"
+        android:textColor="#0EDFC6"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintTop_toBottomOf="@+id/tvDidNotReceiveLabel" />
+
+    <EditText
+        android:id="@+id/etOTPDigit1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/etOTPDigit2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toBottomOf="@+id/tvVerify" />
+
+    <EditText
+        android:id="@+id/etOTPDigit2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/etOTPDigit3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit1"
+        app:layout_constraintTop_toTopOf="@+id/etOTPDigit1" />
+
+    <EditText
+        android:id="@+id/etOTPDigit3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/etOTPDigit4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit2"
+        app:layout_constraintTop_toTopOf="@+id/etOTPDigit1" />
+
+    <EditText
+        android:id="@+id/etOTPDigit4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/etOTPDigit5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit3"
+        app:layout_constraintTop_toTopOf="@+id/etOTPDigit1" />
+
+    <EditText
+        android:id="@+id/etOTPDigit5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/etOTPDigit6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit4"
+        app:layout_constraintTop_toTopOf="@+id/etOTPDigit1" />
+
+    <EditText
+        android:id="@+id/etOTPDigit6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:digits="0123456789 "
+        android:fontFamily="@font/montserrat"
+        android:hint="0"
+        android:inputType="phone"
+        android:maxLength="1"
+        android:textSize="34sp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit5"
+        app:layout_constraintTop_toTopOf="@+id/etOTPDigit1" />
+
+    <View
+        android:id="@+id/hdOTPDigit1"
+        style="@style/hd_line_for_otp_digit"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit1"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit1"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit1" />
+
+    <View
+        android:id="@+id/hdOTPDigit2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit2"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit2"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit2" />
+
+    <View
+        android:id="@+id/hdOTPDigit3"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit3"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit3"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit3" />
+
+    <View
+        android:id="@+id/hdOTPDigit4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit4"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit4"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit4" />
+
+    <View
+        android:id="@+id/hdOTPDivider5"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit5"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit5"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit5" />
+
+    <View
+        android:id="@+id/hdOTPDivider6"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@drawable/line"
+        app:layout_constraintEnd_toEndOf="@+id/etOTPDigit6"
+        app:layout_constraintStart_toEndOf="@+id/etOTPDigit5"
+        app:layout_constraintStart_toStartOf="@+id/etOTPDigit6"
+        app:layout_constraintTop_toBottomOf="@+id/etOTPDigit6" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

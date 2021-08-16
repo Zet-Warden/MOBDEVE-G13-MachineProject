@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobdeve.s11.sy.jacob.machineprojecttest">
+    package="com.mobdeve.s11s13.group13.mp.vaccineph">
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MachineProjectTest">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.mobdeve.s11s13.group13.mp.vaccineph.OTPVerification" android:screenOrientation="portrait" />
+        <activity android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity" android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

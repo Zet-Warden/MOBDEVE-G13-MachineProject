@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Machine Project Test</string>
+    <string name="app_name">VaccinePH</string>
+    <string name="didnt_receive_label">Didn\'t receive anything?</string>
+    <string name="resend_otp">Resend OTP</string>
 </resources>

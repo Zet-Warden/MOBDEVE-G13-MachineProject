@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "399892016816",
+    "project_id": "vaccineph-5a76f",
+    "storage_bucket": "vaccineph-5a76f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399892016816:android:fb3f801be3654e51fa5575",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s11s13.group13.mp.vaccineph"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "399892016816-4ktmj446sc7e4l6gflg78rv8qnvjml7n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mobdeve.s11s13.group13.mp.vaccineph",
+            "certificate_hash": "d3ef940f9bc32828af7a639b04b9ab18aed17d51"
+          }
+        },
+        {
+          "client_id": "399892016816-bnl0d6n71fj4mllo90996tkupenfotuf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi1Teyk8D7xeoV0ZJaiLgLJFhVwSnIe1s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "399892016816-bnl0d6n71fj4mllo90996tkupenfotuf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
