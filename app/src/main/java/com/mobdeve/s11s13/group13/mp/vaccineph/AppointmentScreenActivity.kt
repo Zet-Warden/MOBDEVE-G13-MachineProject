@@ -7,11 +7,14 @@ import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnSave
 import kotlinx.android.synthetic.main.activity_appointment_screen.clMainContainer
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
-
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.NavBarLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewLinker
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnCalendar
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnHome
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnLocation
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnProfile
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
@@ -23,29 +26,24 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     private fun init() {
         UIHider(this, clMainContainer)
+        ViewLinker.linkViewsAndActivities(
+            this,
+            NavBarLinker.createNavBarLinkPairs(btnHome, btnProfile, btnLocation, btnCalendar)
+        )
         initCalendar()
         initSaveButton()
     }
 
     private fun initCalendar() {
-        val calendar = Calendar.getInstance()
-        calendar.set(
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DATE) + 2
-        )
-        val selectedDate = calendar.time
-        cvCalendar.setDate(selectedDate.time, true, true)
+        //initialize the default appointment date
+        val dayAfterTomorrow = Calendar().getXDaysFromNow(2)
+        cvCalendar.setDate(dayAfterTomorrow.time, true, true)
+        tvAppointmentDate.text = dayAfterTomorrow.toFormattedString()
 
-        val sdf = SimpleDateFormat("MMMM d, yyyy", Locale.US)
-        tvAppointmentDate.text = sdf.format(selectedDate)
-
+        //changes the date when user chooses a new date
         cvCalendar.setOnDateChangeListener { _, year, month, date ->
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month, date)
-            println("$year $month $date")
-            println(calendar.time.time)
-            cvCalendar.setDate(calendar.time.time, true, true)
+            val selectedDate = Calendar().createDate(year, month, date)
+            cvCalendar.setDate(selectedDate.time, true, true)
         }
     }
 
@@ -56,13 +54,17 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
         btnSave.setOnClickListener {
             prevDate = if (isValidDate(selectedDate)) selectedDate else prevDate
-
             selectedDate = Date(cvCalendar.date)
+
             if (isValidDate(selectedDate)) {
                 tvAppointmentDate.text = selectedDate.toFormattedString()
             } else {
-                cvCalendar.setDate(prevDate.time, true, true)
-                Toast.makeText(this, "Invalid date, resetting date", Toast.LENGTH_SHORT).show()
+                cvCalendar.setDate(
+                    prevDate.time,
+                    true,
+                    true
+                ) //set the date to the last selected date that was valid
+                Toast.makeText(this, "Invalid, resetting date", Toast.LENGTH_SHORT).show()
             }
         }
     }

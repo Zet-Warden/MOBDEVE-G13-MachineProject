@@ -6,8 +6,12 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewLinker
 import kotlinx.android.synthetic.main.activity_user_screen.*
+import kotlinx.android.synthetic.main.activity_user_screen.btnSave
+import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,6 +25,10 @@ class UserScreenActivity : AppCompatActivity() {
 
     private fun init() {
         UIHider(this, clMainContainer)
+        ViewLinker.linkViewsAndActivities(
+            this,
+            NavBarLinker.createNavBarLinkPairs(btnHome, btnProfile, btnLocation, btnCalendar)
+        )
         initBirthdayCalendarDialog()
         initSexComboBox()
         initPriorityGroupComboBox()

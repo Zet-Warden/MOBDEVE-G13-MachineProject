@@ -3,7 +3,6 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.FirebaseException
@@ -12,11 +11,9 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewRefocuser
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.ViewRefocuser
 import kotlinx.android.synthetic.main.activity_otp_screen.*
 import java.util.concurrent.TimeUnit
 

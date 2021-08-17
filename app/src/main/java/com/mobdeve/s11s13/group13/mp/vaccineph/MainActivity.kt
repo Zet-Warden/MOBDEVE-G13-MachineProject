@@ -12,7 +12,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.PhoneNumberFormatter
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.PhoneNumberFormatter
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
