@@ -25,6 +25,12 @@ class UserScreenActivity : AppCompatActivity() {
         init()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        initUserInfo()
+    }
+
     private fun init() {
         UIHider(this, clMainContainer)
         ViewLinker.linkViewsAndActivities(
@@ -35,6 +41,8 @@ class UserScreenActivity : AppCompatActivity() {
         initSexComboBox()
         initPriorityGroupComboBox()
         initSaveButton()
+
+        initUserInfo()
     }
 
     private fun initSaveButton() {
@@ -55,7 +63,7 @@ class UserScreenActivity : AppCompatActivity() {
         val myCalendar = Calendar.getInstance()
         val updateLabel = fun(date: Date) {
             val sdf = SimpleDateFormat("MMMM d, yyyy", Locale.US)
-            etBirthday.setText(sdf.format(date));
+            etBirthday.setText(sdf.format(date))
         }
 
         val date =
@@ -98,10 +106,6 @@ class UserScreenActivity : AppCompatActivity() {
     private fun saveToDatabase() {
         val db = FirebaseFirestore.getInstance()
 
-        db.collection("users")
-            .whereEqualTo("mobile number", UserData.mobileNumber)
-            .get()
-
         val fields = hashMapOf(
             "first name" to etFirstName.text.toString(),
             "surname" to etLastName.text.toString(),
@@ -112,5 +116,26 @@ class UserScreenActivity : AppCompatActivity() {
         )
 
         db.collection("users").document(UserData.userDocumentId).set(fields, SetOptions.merge())
+    }
+
+    private fun initUserInfo() {
+        val db = FirebaseFirestore.getInstance()
+
+        //retrieve user's saved info from the database, if there is
+        db.collection("users")
+            .whereEqualTo("mobile number", UserData.mobileNumber)
+            .get()
+            .addOnSuccessListener { query ->
+                if (query.size() > 0)
+                    for (document in query)
+                        if (document.contains("first name")) {
+                            etFirstName.setText(document.getString("first name"))
+                            etLastName.setText(document.getString("surname"))
+                            etBirthday.setText(document.getString("birthday"))
+                            actvSex.setText(document.getString("sex"))
+                            actvPriorityGroup.setText(document.getString("priority group"))
+                            etAddress.setText(document.getString("address"))
+                        }
+            }
     }
 }
