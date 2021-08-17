@@ -8,7 +8,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/Fg_mapView"
+        android:id="@+id/fgMapView"
         android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MapsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
