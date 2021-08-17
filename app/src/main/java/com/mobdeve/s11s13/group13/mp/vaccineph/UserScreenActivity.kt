@@ -14,7 +14,9 @@ import kotlinx.android.synthetic.main.activity_user_screen.btnSave
 import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
 import java.text.SimpleDateFormat
 import java.util.*
-
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
 
 class UserScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +42,9 @@ class UserScreenActivity : AppCompatActivity() {
 
         btnSave.setOnClickListener {
             if(isEverythingFilledUp()) {
-                println(actvSex.text)
-                println(actvPriorityGroup.text)
+                // add or update the database on save
+                saveToDatabase()
+
             } else {
                 toast.show()
             }
@@ -90,5 +93,24 @@ class UserScreenActivity : AppCompatActivity() {
                 actvSex.text.isNotBlank() &&
                 actvPriorityGroup.text.isNotBlank() &&
                 etAddress.text.isNotBlank()
+    }
+
+    private fun saveToDatabase() {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users")
+            .whereEqualTo("mobile number", UserData.mobileNumber)
+            .get()
+
+        val fields = hashMapOf(
+            "first name" to etFirstName.text.toString(),
+            "surname" to etLastName.text.toString(),
+            "birthday" to etBirthday.text.toString(),
+            "sex" to actvSex.text.toString(),
+            "priority group" to actvPriorityGroup.text.toString(),
+            "address" to etAddress.text.toString()
+        )
+
+        db.collection("users").document(UserData.userDocumentId).set(fields, SetOptions.merge())
     }
 }
