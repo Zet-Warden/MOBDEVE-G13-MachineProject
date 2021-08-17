@@ -62,12 +62,12 @@ class MainActivity : AppCompatActivity() {
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
-                val intent = Intent(this@MainActivity, OTPScreenActivity::class.java).apply {
+                val loginIntent = Intent(this@MainActivity, OTPScreenActivity::class.java).apply {
                     putExtra(KeyEnum.KEY_MOBILE_NUMBER.name, mobileNumber) //mobile number
                     putExtra(KeyEnum.KEY_OTP.name, verificationId) //otp code
                 }
 
-                startActivity(intent) // go to verify otp activity
+                startActivity(loginIntent) // go to verify otp activity
             }
         }
 
