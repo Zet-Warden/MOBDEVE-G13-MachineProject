@@ -2,6 +2,6 @@
     <string name="app_name">VaccinePH</string>
     <string name="didnt_receive_label">Didn\'t receive anything?</string>
     <string name="resend_otp">Resend OTP</string>
-
+    <string name="MAP_API">AIzaSyAd7OZNm9EZ88g_PrzLz4A5wskNahFUaTs</string>
     <string name="PInfo">PERSONAL INFORMATION</string>
 </resources>
