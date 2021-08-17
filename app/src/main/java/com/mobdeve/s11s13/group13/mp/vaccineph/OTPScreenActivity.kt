@@ -3,6 +3,7 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.FirebaseException
@@ -10,6 +11,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewRefocuser
@@ -19,6 +23,15 @@ import java.util.concurrent.TimeUnit
 class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var verificationId: String
+
+    // these are for the user's information
+    private var givenName = ""
+    private var surname = ""
+    private var birthdate = ""
+    private var sex = ""
+    private var priorityGroup = ""
+    private var address = ""
+    private var appointmentDate = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,8 +128,24 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
-                //TODO: start home page activity
-                startActivity(Intent(this, MainActivity::class.java))
+
+                loginOrAddUser()
+
+                val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java).apply {
+                    putExtras(intent)
+                    //if user has already filled up the personal information form
+                    if (givenName != "") {
+                        putExtra(KeyEnum.KEY_GIVEN_NAME.name, givenName)
+                        putExtra(KeyEnum.KEY_SURNAME.name, surname)
+                        putExtra(KeyEnum.KEY_BIRTHDATE.name, birthdate)
+                        putExtra(KeyEnum.KEY_SEX.name, sex)
+                        putExtra(KeyEnum.KEY_PRIORITY_GROUP.name, priorityGroup)
+                        putExtra(KeyEnum.KEY_ADDRESS.name, address)
+                        putExtra(KeyEnum.KEY_APPOINTMENT_DATE.name, appointmentDate)
+                    }
+                }
+
+                startActivity(homeIntent) // go to home screen activity
             }
             .addOnFailureListener {
                 errorToast.show()
@@ -129,6 +158,52 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
                 return@isOTPDigitsCompletelyFilled false
         }
         return true
+    }
+
+    private fun loginOrAddUser() {
+        val db = FirebaseFirestore.getInstance() //instance of database
+        val mobileNumber = intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)
+
+        //check if user is in the database already
+        db.collection("users")
+            .whereEqualTo("mobile number", mobileNumber)
+            .get()
+            .addOnSuccessListener { query ->
+                //user exists already
+                if (query.size() > 0) {
+                    // read the document and add extra to intent later
+                    for (document in query)
+                        // if user has already filled up the personal information form
+                        if (document.contains("given name")) {
+                            //getting all the data
+                            givenName = document.getString("given name")!!
+                            surname = document.getString("surname")!!
+                            birthdate = document.getString("birthdate")!!
+                            sex = document.getString("sex")!!
+                            priorityGroup = document.getString("priority group")!!
+                            address = document.getString("address")!!
+                            appointmentDate = document.getString("appointment date")!!
+                        }
+                }
+                //new user
+                else {
+
+                    //create new document
+                    val newUser = hashMapOf(
+                        "mobile number" to mobileNumber
+                    )
+                    db.collection("users").add(newUser)
+                        .addOnSuccessListener {
+                            Toast.makeText(this@OTPScreenActivity, "New User Created", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this@OTPScreenActivity, "rip", Toast.LENGTH_SHORT).show()
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this@OTPScreenActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
 
