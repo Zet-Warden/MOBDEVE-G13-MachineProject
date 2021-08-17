@@ -116,7 +116,7 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
                 //TODO: start home page activity
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, HomeScreenActivity::class.java))
             }
             .addOnFailureListener {
                 errorToast.show()

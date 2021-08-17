@@ -15,12 +15,6 @@
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.HomeScreenActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
         </activity>
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.UserScreenActivity"
@@ -31,6 +25,11 @@
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
     </application>
