@@ -43,16 +43,18 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     private fun updateCalendarView() {
        getSavedDate {
+           println(it)
            if(it != null) {
                val date = it.toDateOrNull()
                if(date != null) {
+
                    cvCalendar.setDate(date.time, true, true)
                    tvAppointmentDate.text = it
                } else {
-                   tvAppointmentDate.text = "No appointment date set"
                    println("Invalid date string format")
                }
            } else {
+               tvAppointmentDate.text = "No appointment date set"
                println("No appointment in database")
            }
        }
@@ -73,7 +75,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     private fun initCalendar() {
         //initialize the default appointment date
-        
+
         /*val dayAfterTomorrow = Calendar().getXDaysFromNow(2)
         cvCalendar.setDate(dayAfterTomorrow.time, true, true)
         tvAppointmentDate.text = dayAfterTomorrow.toFormattedString()*/
