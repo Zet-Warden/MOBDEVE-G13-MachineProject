@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_appointment_screen.btnHome
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnLocation
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnProfile
 import kotlinx.android.synthetic.main.activity_user_screen.*
+import java.time.LocalTime
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
@@ -35,6 +36,28 @@ class AppointmentScreenActivity : AppCompatActivity() {
         init()
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateCalendarView()
+    }
+
+    private fun updateCalendarView() {
+       getSavedDate {
+           if(it != null) {
+               val date = it.toDateOrNull()
+               if(date != null) {
+                   cvCalendar.setDate(date.time, true, true)
+                   tvAppointmentDate.text = it
+               } else {
+                   tvAppointmentDate.text = "No appointment date set"
+                   println("Invalid date string format")
+               }
+           } else {
+               println("No appointment in database")
+           }
+       }
+    }
+
     private fun init() {
         UIHider(this, clMainContainer)
         ViewLinker.linkViewsAndActivities(
@@ -43,8 +66,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
         )
         initCalendar()
         initSaveButton()
-        //getMaxCap()
-        getMaxCap() //get maximum capacity of vaxx center
+        getMaxCap()
+        //getMaxCap() //get maximum capacity of vaxx center
         //getSlotsTaken(Calendar().getXDaysFromNow(2)) //idk if this should be here actually, but this checks how many slots take
     }
 
@@ -96,6 +119,18 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
     }
 
+    private fun amIKachow(myTime : Long, allTime : List<Long>) : Boolean {
+        var fastestTime : Long = Long.MAX_VALUE
+
+        for (time in allTime) {
+            if(time < fastestTime)
+                fastestTime = time
+        }
+
+        return myTime == fastestTime
+    }
+
+
     private fun isValidDate(date: Date): Boolean {
         return date.after(Calendar().getTomorrow())
     }
@@ -126,12 +161,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val location = "dummy location" //use geolocation to determine the closest vaxx center
 
-        val slotsTaken = db.collection("appointments")
+        db.collection("appointments")
             .whereEqualTo("date", date)
             .whereEqualTo("location", location)
             .get()
             .addOnSuccessListener { query ->
                 taken = query.size()
+                println("take: $taken")
+                println("max: $max")
                 callback()
             }
 
@@ -146,7 +183,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
         val newAppointment = hashMapOf(
             "date" to tvAppointmentDate.text,
             "location" to location,
-            "mobile number" to UserData.mobileNumber
+            "mobile number" to UserData.mobileNumber,
+            "time stamp" to System.currentTimeMillis()
         )
 
         db.collection("appointments")
@@ -162,6 +200,31 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
                 db.collection("appointments")
                     .add(newAppointment) //add new appointment to the database
+                    .addOnSuccessListener {
+                        //if(amIKachow(newAppointment.get("time stamp"), ))
+                    }
+
+            }
+    }
+
+    private fun getAllTimeStamps() {
+        val db = FirebaseFirestore.getInstance()
+        val location = "dummy location"
+        val date : Date? = null
+
+        db.collection("appointments")
+            .whereEqualTo("mobile number", UserData.mobileNumber)
+    }
+
+    private fun getSavedDate(callback: (String?) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("appointments")
+            .whereEqualTo("mobile number", UserData.mobileNumber)
+            .get()
+            .addOnSuccessListener { query ->
+                val date = query.documents[0].getString("date")
+                callback(date)
             }
     }
 }
