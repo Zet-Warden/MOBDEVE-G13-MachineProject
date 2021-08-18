@@ -41,12 +41,11 @@ class AppointmentScreenActivity : AppCompatActivity() {
             this,
             NavBarLinker.createNavBarLinkPairs(btnHome, btnProfile, btnLocation, btnCalendar)
         )
-
-        getMaxCap() //get maximum capacity of vaxx center
-        getSlotsTaken(Calendar().getXDaysFromNow(2)) //idk if this should be here actually, but this checks how many slots taken
-
         initCalendar()
         initSaveButton()
+        //getMaxCap()
+        getMaxCap() //get maximum capacity of vaxx center
+        //getSlotsTaken(Calendar().getXDaysFromNow(2)) //idk if this should be here actually, but this checks how many slots take
     }
 
     private fun initCalendar() {
@@ -77,22 +76,22 @@ class AppointmentScreenActivity : AppCompatActivity() {
             prevDate = if (isValidDate(selectedDate)) selectedDate else prevDate
             selectedDate = Date(cvCalendar.date)
 
-            getSlotsTaken(selectedDate) //get number of slots taken for a certain day in a certain vaxx center
-
-            if (isValidDate(selectedDate) && isAvailable()) {
-                tvAppointmentDate.text = selectedDate.toFormattedString()
-                saveToDatabase()
-                saveDateMessage.show()
-            } else {
-                cvCalendar.setDate(
-                    prevDate.time,
-                    true,
-                    true
-                ) //set the date to the last selected date that was valid
-                if (!isValidDate(selectedDate))
-                    invalidDateMessage.show()
-                else
-                    appointmentFullMessage.show()
+            getSlotsTaken(selectedDate) {
+                if (isValidDate(selectedDate) && isAvailable()) {
+                    tvAppointmentDate.text = selectedDate.toFormattedString()
+                    saveToDatabase()
+                    saveDateMessage.show()
+                } else {
+                    cvCalendar.setDate(
+                        prevDate.time,
+                        true,
+                        true
+                    ) //set the date to the last selected date that was valid
+                    if (!isValidDate(selectedDate))
+                        invalidDateMessage.show()
+                    else
+                        appointmentFullMessage.show()
+                }
             }
         }
     }
@@ -122,7 +121,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     // gets the number of slots taken on a certain day
-    private fun getSlotsTaken(d: Date) {
+    private fun getSlotsTaken(d: Date, callback : () -> Unit) {
         val date = d.toFormattedString()
         val db = FirebaseFirestore.getInstance()
         val location = "dummy location" //use geolocation to determine the closest vaxx center
@@ -133,6 +132,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { query ->
                 taken = query.size()
+                callback()
             }
 
     }
