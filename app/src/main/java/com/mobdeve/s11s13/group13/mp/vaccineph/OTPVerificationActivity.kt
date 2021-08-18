@@ -118,7 +118,7 @@ class OTPVerificationActivity : AppCompatActivity(), ViewRefocuser {
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
                 //TODO: start home page activity
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, MapsActivity::class.java))
             }
             .addOnFailureListener {
                 errorToast.show()
