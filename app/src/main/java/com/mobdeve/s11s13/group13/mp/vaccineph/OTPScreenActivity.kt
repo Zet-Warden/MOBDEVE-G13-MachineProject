@@ -160,11 +160,16 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
                             println("new user was not added successfully !! oh no rip")
                         }
                     val userIntent = Intent(this@OTPScreenActivity, UserScreenActivity::class.java)
-                    startActivity(userIntent) // go to home screen activity
+                    startActivity(userIntent) // go to user screen activity
 
                 } else {
-                    val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java)
-                    startActivity(homeIntent) // go to home screen activity
+                    if (query.documents[0].contains("first name")) {
+                        val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java)
+                        startActivity(homeIntent) // go to user screen activity
+                    } else {
+                        val userIntent = Intent(this@OTPScreenActivity, UserScreenActivity::class.java)
+                        startActivity(userIntent) // go to home screen activity
+                    }
                 }
 
                 UserData.userDocumentId = query.documents[0].id

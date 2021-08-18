@@ -20,8 +20,8 @@ object ViewLinker {
     }
 
     private fun linkViewAndActivity(app: Activity, view: View, clazz: Class<*>) {
+        val message = Toast.makeText(app, "Please give us ur data, before using the app :)", Toast.LENGTH_SHORT)
         view.setOnClickListener {
-            val message = Toast.makeText(app, "Please give us ur data, before using the app :)", Toast.LENGTH_SHORT)
             //start activity only if we have user record
             isUserRegistered {
                 if(it) {
