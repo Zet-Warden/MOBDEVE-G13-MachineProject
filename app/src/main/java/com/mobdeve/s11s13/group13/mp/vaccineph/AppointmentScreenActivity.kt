@@ -3,8 +3,10 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
@@ -24,8 +26,8 @@ import kotlinx.android.synthetic.main.activity_user_screen.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
-    private var max : Int = 0
-    private var taken : Int = 0
+    private var max: Int = 0
+    private var taken: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,12 @@ class AppointmentScreenActivity : AppCompatActivity() {
         var selectedDate = dayAfterTomorrow
         var prevDate = dayAfterTomorrow
 
+        val saveDateMessage = Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT);
+        val invalidDateMessage =
+            Toast.makeText(this, "Invalid, resetting date", Toast.LENGTH_SHORT);
+        val appointmentFullMessage =
+            Toast.makeText(this, "Appointment for this day is full already", Toast.LENGTH_LONG)
+
         btnSave.setOnClickListener {
             prevDate = if (isValidDate(selectedDate)) selectedDate else prevDate
             selectedDate = Date(cvCalendar.date)
@@ -74,7 +82,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
             if (isValidDate(selectedDate) && isAvailable()) {
                 tvAppointmentDate.text = selectedDate.toFormattedString()
                 saveToDatabase()
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+                saveDateMessage.show()
             } else {
                 cvCalendar.setDate(
                     prevDate.time,
@@ -82,9 +90,9 @@ class AppointmentScreenActivity : AppCompatActivity() {
                     true
                 ) //set the date to the last selected date that was valid
                 if (!isValidDate(selectedDate))
-                    Toast.makeText(this, "Invalid, resetting date", Toast.LENGTH_SHORT).show()
+                    invalidDateMessage.show()
                 else
-                    Toast.makeText(this, "Appointment for this day is full already", Toast.LENGTH_LONG).show()
+                    appointmentFullMessage.show()
             }
         }
     }
@@ -107,8 +115,9 @@ class AppointmentScreenActivity : AppCompatActivity() {
             .whereEqualTo("name", location)
             .get()
             .addOnSuccessListener { query ->
-                for (document in query)
+                for (document in query) {
                     max = document.getLong("max capacity")!!.toInt()
+                }
             }
     }
 
@@ -118,13 +127,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
         val db = FirebaseFirestore.getInstance()
         val location = "dummy location" //use geolocation to determine the closest vaxx center
 
-        db.collection("appointments")
+        val slotsTaken = db.collection("appointments")
             .whereEqualTo("date", date)
             .whereEqualTo("location", location)
             .get()
             .addOnSuccessListener { query ->
                 taken = query.size()
             }
+
     }
 
     // saves the user's appointment to the database
@@ -146,12 +156,12 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 //if user made an appointment before
                 if (query.size() > 0) {
                     var docId = query.documents[0].id
-                    db.collection("appointments").document(docId).delete() //delete previous appointment
+                    db.collection("appointments").document(docId)
+                        .delete() //delete previous appointment
                 }
 
-                db.collection("appointments").add(newAppointment) //add new appointment to the database
+                db.collection("appointments")
+                    .add(newAppointment) //add new appointment to the database
             }
-
-
     }
 }
