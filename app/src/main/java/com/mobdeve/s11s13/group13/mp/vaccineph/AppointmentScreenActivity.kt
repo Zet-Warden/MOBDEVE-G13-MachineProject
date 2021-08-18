@@ -73,9 +73,10 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     private fun initCalendar() {
         //initialize the default appointment date
-        val dayAfterTomorrow = Calendar().getXDaysFromNow(2)
+        
+        /*val dayAfterTomorrow = Calendar().getXDaysFromNow(2)
         cvCalendar.setDate(dayAfterTomorrow.time, true, true)
-        tvAppointmentDate.text = dayAfterTomorrow.toFormattedString()
+        tvAppointmentDate.text = dayAfterTomorrow.toFormattedString()*/
 
         //changes the date when user chooses a new date
         cvCalendar.setOnDateChangeListener { _, year, month, date ->
@@ -223,8 +224,12 @@ class AppointmentScreenActivity : AppCompatActivity() {
             .whereEqualTo("mobile number", UserData.mobileNumber)
             .get()
             .addOnSuccessListener { query ->
-                val date = query.documents[0].getString("date")
-                callback(date)
+                if(!query.isEmpty) {
+                    val date = query.documents[0].getString("date")
+                    callback(date)
+                } else {
+                    //idk log smth?
+                }
             }
     }
 }
