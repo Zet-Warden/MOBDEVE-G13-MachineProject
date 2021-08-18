@@ -83,7 +83,8 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
                 override fun onVerificationFailed(e: FirebaseException) {
-                    Toast.makeText(this@OTPScreenActivity, "${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@OTPScreenActivity, "${e.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 override fun onCodeSent(
@@ -118,13 +119,11 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
 
-                UserData.mobileNumber = intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //assigns the mobile number of the user to a "static" variable in the UserData class for easy access
+                UserData.mobileNumber =
+                    intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //assigns the mobile number of the user to a "static" variable in the UserData class for easy access
 
                 addUser() //adds the user's mobile number to the database
 
-                val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java)
-
-                startActivity(homeIntent) // go to home screen activity
             }
             .addOnFailureListener {
                 errorToast.show()
@@ -155,11 +154,17 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
                     )
                     db.collection("users").add(newUser)
                         .addOnSuccessListener {
-                            println ("added a new user to the database")
+                            println("added a new user to the database")
                         }
                         .addOnFailureListener {
-                            println ("new user was not added successfully !! oh no rip")
+                            println("new user was not added successfully !! oh no rip")
                         }
+                    val userIntent = Intent(this@OTPScreenActivity, UserScreenActivity::class.java)
+                    startActivity(userIntent) // go to home screen activity
+
+                } else {
+                    val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java)
+                    startActivity(homeIntent) // go to home screen activity
                 }
 
                 UserData.userDocumentId = query.documents[0].id
