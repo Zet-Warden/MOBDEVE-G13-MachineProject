@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
 
 class UserScreenActivity : AppCompatActivity() {
@@ -46,17 +47,38 @@ class UserScreenActivity : AppCompatActivity() {
     }
 
     private fun initSaveButton() {
-        val toast = Toast.makeText(this, "Please enter information for all fields.", Toast.LENGTH_SHORT)
+        val incompleteMessage =
+            Toast.makeText(this, "Please enter information for all fields.", Toast.LENGTH_SHORT)
+        val notOfAgeMessage =
+            Toast.makeText(this, "You must be 18 and above to get vaccinated.", Toast.LENGTH_SHORT)
+        val saveMessage =
+            Toast.makeText(this, "Your profile has been saved.", Toast.LENGTH_SHORT)
 
         btnSave.setOnClickListener {
-            if(isEverythingFilledUp()) {
+            if (!isEverythingFilledUp()) {
+                incompleteMessage.show()
+            } else if (!isOfLegalAge()) {
+                notOfAgeMessage.show()
+            } else {
                 // add or update the database on save
                 saveToDatabase()
-
-            } else {
-                toast.show()
+                saveMessage.show()
             }
         }
+    }
+
+    private fun isOfLegalAge(): Boolean {
+        val currentCalendar = Calendar.getInstance()
+        val userCalendar = Calendar.getInstance()
+        userCalendar.time = etBirthday.text.toString().toDateOrNull()!!
+
+        if (currentCalendar.get(Calendar.YEAR) - userCalendar.get(Calendar.YEAR) < 18) return false
+        if (currentCalendar.get(Calendar.YEAR) - userCalendar.get(Calendar.YEAR) > 18) return true
+
+        if (userCalendar.get(Calendar.MONTH) > currentCalendar.get(Calendar.MONTH)) return false
+        if (userCalendar.get(Calendar.MONTH) < currentCalendar.get(Calendar.MONTH)) return true
+
+        return userCalendar.get(Calendar.DATE) <= currentCalendar.get(Calendar.DATE)
     }
 
     private fun initBirthdayCalendarDialog() {
@@ -94,7 +116,7 @@ class UserScreenActivity : AppCompatActivity() {
         actvPriorityGroup.setAdapter(priorityGroupArrayAdapter)
     }
 
-    private fun isEverythingFilledUp() : Boolean {
+    private fun isEverythingFilledUp(): Boolean {
         return etFirstName.text.isNotBlank() &&
                 etLastName.text.isNotBlank() &&
                 etBirthday.text.isNotBlank() &&

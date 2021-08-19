@@ -14,13 +14,13 @@ object ViewLinker {
         app: Activity,
         views: List<Pair<View, Class<*>>>
     ) {
+        val message = Toast.makeText(app, "Please give us ur data, before using the app :)", Toast.LENGTH_SHORT)
         for (view in views) {
-            linkViewAndActivity(app, view.first, view.second)
+            linkViewAndActivity(app, view.first, view.second, message)
         }
     }
 
-    private fun linkViewAndActivity(app: Activity, view: View, clazz: Class<*>) {
-        val message = Toast.makeText(app, "Please give us ur data, before using the app :)", Toast.LENGTH_SHORT)
+    private fun linkViewAndActivity(app: Activity, view: View, clazz: Class<*>, errorMessage : Toast) {
         view.setOnClickListener {
             //start activity only if we have user record
             isUserRegistered {
@@ -30,7 +30,7 @@ object ViewLinker {
                     )
                     app.finish()
                 } else {
-                    message.show()
+                    errorMessage.show()
                 }
             }
         }
