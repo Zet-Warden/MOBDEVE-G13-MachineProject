@@ -65,7 +65,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setInitialAppointmentDateTextAndCalendarFocus(dateString : String?, date : Date?) {
-        if (dateString == null) {
+        if (dateString == null || dateString == Calendar().time.toFormattedString()) {
             tvAppointmentDate.text = "No appointment date set"
             println("No appointment in database")
         } else {
@@ -183,7 +183,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
         } else {
             val appointment = documentTo.toObject(AppointmentData::class.java)!!
             appointment.mobileNumbers.add(User.mobileNumber)
-            DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text}", appointment)
+            DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text} - ${User.location}", appointment)
         }
         val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
         newDoc.reference.update("count", FieldValue.increment(1))
