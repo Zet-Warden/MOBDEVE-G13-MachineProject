@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
@@ -15,6 +16,7 @@ import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import java.util.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
@@ -148,8 +150,10 @@ class AppointmentScreenActivity : AppCompatActivity() {
         queryPairs.add("date" to date)
         queryPairs.add("location" to User.location)
 
-        val query = DB.createEqualToQueries("appointments", queryPairs)
-        return DB.asyncReadDocumentFromCollection(query).size()
+        //val query = DB.createEqualToQueries("appointments", queryPairs)
+        val db = FirebaseFirestore.getInstance()
+        val query = db.collection("appointments").document("${tvAppointmentDate.text} - ${User.location}")
+        return query.get().await().getLong("count")!!.toInt()
     }
 
     // saves the user's appointment to the database
@@ -187,22 +191,6 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
         val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
         newDoc.reference.update("count", FieldValue.increment(1))
-
-        /*val _newAppointment: MutableMap<String, Any> = hashMapOf(
-            "date" to tvAppointmentDate.text,
-            "location" to User.location,
-            "mobile_number" to User.mobileNumber,
-        )
-
-
-        val query = DB.createEqualToQuery("appointments", "date" to "${tvAppointmentDate.text}")
-        DB.readDocumentFromCollection(query) {
-            if (!it.isEmpty) {
-                DB.updateDocumentFromCollection(query, newAppointment)
-            } else {
-                DB.createDocumentToCollection("appointments",newAppointment)
-            }
-        }*/
     }
 
     private suspend fun getSavedDate(): String? {
