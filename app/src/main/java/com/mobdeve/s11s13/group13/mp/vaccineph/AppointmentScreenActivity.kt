@@ -206,7 +206,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     private suspend fun getSavedDate(): String? {
-        val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
+        //val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
+        val query = DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
         val document = DB.asyncReadDocumentFromCollection(query)
 
         if (document.isEmpty) return Calendar().time.toFormattedString()
