@@ -1,12 +1,11 @@
-package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
+package com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper
 
 import android.app.Activity
 import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mobdeve.s11s13.group13.mp.vaccineph.HomeScreenActivity
-import com.mobdeve.s11s13.group13.mp.vaccineph.UserScreenActivity
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
 
 object ViewLinker {
 

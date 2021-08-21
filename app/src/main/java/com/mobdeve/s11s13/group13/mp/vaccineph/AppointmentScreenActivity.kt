@@ -11,9 +11,9 @@ import kotlinx.android.synthetic.main.activity_appointment_screen.btnSave
 import kotlinx.android.synthetic.main.activity_appointment_screen.clMainContainer
 import java.util.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.NavBarLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnCalendar
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnHome
 import kotlinx.android.synthetic.main.activity_appointment_screen.btnLocation

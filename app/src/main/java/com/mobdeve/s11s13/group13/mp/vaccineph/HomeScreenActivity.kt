@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.NavBarLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeFeedData
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeFeedDataGenerator
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeScreenRvAdapter
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ViewLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import kotlinx.android.synthetic.main.activity_home_screen.btnCalendar
 import kotlinx.android.synthetic.main.activity_home_screen.btnHome

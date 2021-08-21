@@ -1,4 +1,4 @@
-package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
+package com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper
 
 import android.view.View
 import com.mobdeve.s11s13.group13.mp.vaccineph.AppointmentScreenActivity
