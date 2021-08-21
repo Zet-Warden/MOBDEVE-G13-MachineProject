@@ -153,7 +153,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
         //val query = DB.createEqualToQueries("appointments", queryPairs)
         val db = FirebaseFirestore.getInstance()
         val query = db.collection("appointments").document("${d.toFormattedString()} - ${User.location}")
-        return query.get().await().getLong("count")!!.toInt()
+        return query.get().await().getLong("count")?.toInt() ?: 0
     }
 
     // saves the user's appointment to the database
