@@ -18,6 +18,21 @@ object DB {
             }
     }
 
+    fun createNamedDocumentToCollection(
+        collection: String,
+        document: String,
+        data: Any,
+        callback: () -> Unit = {}
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(collection)
+            .document(document)
+            .set(data)
+            .addOnSuccessListener {
+                callback()
+            }
+    }
+
     fun readDocumentFromCollection(
         query: Query,
         callback: (QuerySnapshot) -> Unit = {}
@@ -51,6 +66,13 @@ object DB {
             .get().await()
     }
 
+    suspend fun asyncReadNamedDocumentFromCollection(collection: String, document: String) : DocumentSnapshot{
+        val db = FirebaseFirestore.getInstance()
+        return db.collection(collection)
+            .document(document)
+            .get().await()
+    }
+
     fun updateDocumentFromCollection(
         query: Query,
         data: MutableMap<String, Any>,
@@ -70,10 +92,26 @@ object DB {
             }
     }
 
-    fun mergeDataToDocument(collection: String, documentId: String, data: Any) {
+    fun updateNamedDocumentFromCollection(
+        collection: String,
+        document : String,
+        data: MutableMap<String, Any>,
+        callback: () -> Unit = {}
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection(collection)
+            .document(document)
+            .update(data)
+            .addOnSuccessListener {
+                callback()
+            }
+    }
+
+    fun mergeDataToNamedDocument(collection: String, documentId: String, data: Any) {
         val db = FirebaseFirestore.getInstance()
         db.collection(collection).document(documentId).set(data, SetOptions.merge())
     }
+
 
     fun deleteDocumentFromCollection(query: Query, callback: (QueryDocumentSnapshot) -> Unit = {}) {
         query.get()
@@ -95,7 +133,7 @@ object DB {
 
     fun createEqualToQueries(collection: String, queries: MutableList<Pair<String, Any?>>): Query {
         val db = FirebaseFirestore.getInstance()
-        var query : Query = db.collection(collection)
+        var query: Query = db.collection(collection)
 
         queries.forEach {
             query = query.whereEqualTo(it.first, it.second)
@@ -103,10 +141,8 @@ object DB {
         return query
     }
 
-    fun createTransaction() {
+    fun createArrayContainsQuery(collection: String, query: Pair<String, Any>): Query {
         val db = FirebaseFirestore.getInstance()
-
-        db.
-
+        return db.collection(collection).whereArrayContains(query.first, query.second)
     }
 }

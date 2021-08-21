@@ -2,13 +2,14 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.AppointmentData
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
@@ -151,28 +152,63 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     // saves the user's appointment to the database
-    private fun saveToDatabase() {
-        val newAppointment: MutableMap<String, Any> = hashMapOf(
+    private suspend fun saveToDatabase() {
+        var query = DB.createEqualToQuery("appointments", "location" to User.location)
+        query = query.whereArrayContains("mobileNumbers",  User.mobileNumber)
+        val querySnapshot= DB.asyncReadDocumentFromCollection(query)
+
+        //delete previous appointments
+        if(!querySnapshot.isEmpty) {
+            val prevAppointment = querySnapshot.first().toObject(AppointmentData::class.java)
+            println("here: $prevAppointment")
+            prevAppointment.mobileNumbers.remove(User.mobileNumber)
+            querySnapshot.first().reference.update(
+                hashMapOf(
+                    "mobileNumbers" to prevAppointment.mobileNumbers,
+                ) as Map<String, Any>
+            )
+        }
+
+        val documentTo = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
+        if(!documentTo.exists()) {
+            val newAppointment: MutableMap<String, Any> = hashMapOf(
+                "date" to tvAppointmentDate.text,
+                "location" to User.location,
+                "mobileNumbers" to mutableListOf(User.mobileNumber),
+                "count" to 0,
+            )
+            DB.createNamedDocumentToCollection("appointments", "${tvAppointmentDate.text} - ${User.location}", newAppointment)
+        } else {
+            val appointment = documentTo.toObject(AppointmentData::class.java)!!
+            appointment.mobileNumbers.add(User.mobileNumber)
+            DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text}", appointment)
+        }
+
+
+
+
+        /*val _newAppointment: MutableMap<String, Any> = hashMapOf(
             "date" to tvAppointmentDate.text,
             "location" to User.location,
             "mobile_number" to User.mobileNumber,
         )
 
-        val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
+
+        val query = DB.createEqualToQuery("appointments", "date" to "${tvAppointmentDate.text}")
         DB.readDocumentFromCollection(query) {
             if (!it.isEmpty) {
                 DB.updateDocumentFromCollection(query, newAppointment)
             } else {
-                DB.createDocumentToCollection("appointments", newAppointment)
+                DB.createDocumentToCollection("appointments",newAppointment)
             }
-        }
+        }*/
     }
 
     private suspend fun getSavedDate(): String? {
         val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
         val document = DB.asyncReadDocumentFromCollection(query)
 
-        if (document.isEmpty) return null
+        if (document.isEmpty) return Calendar().time.toFormattedString()
         return document.first().getString("date")
     }
 }
