@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
@@ -181,7 +180,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
             "${tvAppointmentDate.text} - ${User.location}"
         )
         if (!documentTo.exists()) {
-            val foo = {
+            val foo = suspend {
                 val newAppointment: MutableMap<String, Any> = hashMapOf(
                     "date" to tvAppointmentDate.text,
                     "location" to User.location,

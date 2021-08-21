@@ -2,6 +2,9 @@ package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 object DB {
@@ -66,7 +69,10 @@ object DB {
             .get().await()
     }
 
-    suspend fun asyncReadNamedDocumentFromCollection(collection: String, document: String) : DocumentSnapshot{
+    suspend fun asyncReadNamedDocumentFromCollection(
+        collection: String,
+        document: String
+    ): DocumentSnapshot {
         val db = FirebaseFirestore.getInstance()
         return db.collection(collection)
             .document(document)
@@ -94,7 +100,7 @@ object DB {
 
     fun updateNamedDocumentFromCollection(
         collection: String,
-        document : String,
+        document: String,
         data: MutableMap<String, Any>,
         callback: () -> Unit = {}
     ) {
@@ -146,21 +152,28 @@ object DB {
         return db.collection(collection).whereArrayContains(query.first, query.second)
     }
 
-    fun createTransaction(collection : String, documentId : String, increment : Int, foo : () -> Unit = {}, callback: (Int) -> Unit) {
+    fun createTransaction(
+        collection: String,
+        documentId: String,
+        increment: Int,
+        foo: suspend () -> Unit = {},
+        callback: (Int) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection(collection).document(documentId)
 
-        db.runTransaction { transaction ->
-
+        GlobalScope.launch(Dispatchers.IO) {
             foo()
-            val snapshot = transaction.get(docRef)
-            val newCount = snapshot.getLong("count")!!.toInt() + increment
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(docRef)
+                val newCount = snapshot.getLong("count")!!.toInt() + increment
 
 
-            transaction.update(docRef, "count", newCount)
-            newCount
-        }.addOnSuccessListener {  result ->
-            callback(result)
+                transaction.update(docRef, "count", newCount)
+                newCount
+            }.addOnSuccessListener {
+                callback(it)
+            }
         }
     }
 
