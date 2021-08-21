@@ -146,13 +146,16 @@ object DB {
         return db.collection(collection).whereArrayContains(query.first, query.second)
     }
 
-    fun createTransaction(collection : String, documentId : String, increment : Int, callback: (Int) -> Unit) {
+    fun createTransaction(collection : String, documentId : String, increment : Int, foo : () -> Unit = {}, callback: (Int) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection(collection).document(documentId)
 
         db.runTransaction { transaction ->
+
+            foo()
             val snapshot = transaction.get(docRef)
             val newCount = snapshot.getLong("count")!!.toInt() + increment
+
 
             transaction.update(docRef, "count", newCount)
             newCount

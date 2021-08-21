@@ -66,7 +66,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setInitialAppointmentDateTextAndCalendarFocus(dateString : String?, date : Date?) {
+    private fun setInitialAppointmentDateTextAndCalendarFocus(dateString: String?, date: Date?) {
         if (dateString == null || dateString == Calendar().time.toFormattedString()) {
             tvAppointmentDate.text = "No appointment date set"
             println("No appointment in database")
@@ -152,18 +152,19 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
         //val query = DB.createEqualToQueries("appointments", queryPairs)
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection("appointments").document("${d.toFormattedString()} - ${User.location}")
+        val query =
+            db.collection("appointments").document("${d.toFormattedString()} - ${User.location}")
         return query.get().await().getLong("count")?.toInt() ?: 0
     }
 
     // saves the user's appointment to the database
     private suspend fun saveToDatabase() {
         var query = DB.createEqualToQuery("appointments", "location" to User.location)
-        query = query.whereArrayContains("mobileNumbers",  User.mobileNumber)
-        val querySnapshot= DB.asyncReadDocumentFromCollection(query)
+        query = query.whereArrayContains("mobileNumbers", User.mobileNumber)
+        val querySnapshot = DB.asyncReadDocumentFromCollection(query)
 
         //delete previous appointments
-        if(!querySnapshot.isEmpty) {
+        if (!querySnapshot.isEmpty) {
             val prevAppointment = querySnapshot.first().toObject(AppointmentData::class.java)
             println("here: $prevAppointment")
             prevAppointment.mobileNumbers.remove(User.mobileNumber)
@@ -175,32 +176,51 @@ class AppointmentScreenActivity : AppCompatActivity() {
             querySnapshot.first().reference.update("count", FieldValue.increment(-1))
         }
 
-        val documentTo = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
-        if(!documentTo.exists()) {
-            val newAppointment: MutableMap<String, Any> = hashMapOf(
-                "date" to tvAppointmentDate.text,
-                "location" to User.location,
-                "mobileNumbers" to mutableListOf(User.mobileNumber),
-                "count" to 0,
-            )
-            DB.createNamedDocumentToCollection("appointments", "${tvAppointmentDate.text} - ${User.location}", newAppointment)
+        val documentTo = DB.asyncReadNamedDocumentFromCollection(
+            "appointments",
+            "${tvAppointmentDate.text} - ${User.location}"
+        )
+        if (!documentTo.exists()) {
+            val foo = {
+                val newAppointment: MutableMap<String, Any> = hashMapOf(
+                    "date" to tvAppointmentDate.text,
+                    "location" to User.location,
+                    "mobileNumbers" to mutableListOf(User.mobileNumber),
+                    "count" to 0,
+                )
+                DB.createNamedDocumentToCollection(
+                    "appointments",
+                    "${tvAppointmentDate.text} - ${User.location}",
+                    newAppointment
+                )
+            }
+
+            DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1, foo) {
+                taken = it
+            }
         } else {
-            val appointment = documentTo.toObject(AppointmentData::class.java)!!
-            appointment.mobileNumbers.add(User.mobileNumber)
-            DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text} - ${User.location}", appointment)
+            DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1) {
+                taken = it
+                val appointment = documentTo.toObject(AppointmentData::class.java)!!
+                appointment.mobileNumbers.add(User.mobileNumber)
+                DB.mergeDataToNamedDocument(
+                    "appointments",
+                    "${tvAppointmentDate.text} - ${User.location}",
+                    appointment
+                )
+            }
 
         }
 //        val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
 //        newDoc.reference.update("count", FieldValue.increment(1))
 
-        DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1) {
-            taken = it
-        }
+
     }
 
     private suspend fun getSavedDate(): String? {
         //val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
-        val query = DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
+        val query =
+            DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
         val document = DB.asyncReadDocumentFromCollection(query)
 
         if (document.isEmpty) return Calendar().time.toFormattedString()
