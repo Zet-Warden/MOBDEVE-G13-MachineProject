@@ -17,6 +17,8 @@ import java.util.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
 
 class UserScreenActivity : AppCompatActivity() {
@@ -126,38 +128,43 @@ class UserScreenActivity : AppCompatActivity() {
     }
 
     private fun saveToDatabase() {
-        val db = FirebaseFirestore.getInstance()
+        val fields = UserData(
+            etFirstName.text.toString(),
+            etLastName.text.toString(),
+            etBirthday.text.toString(),
+            User.mobileNumber,
+            actvSex.text.toString(),
+            actvPriorityGroup.text.toString(),
+            etAddress.text.toString(),
+        )
+        DB.createDocumentToCollection("users", fields) {
+            User.isRegistered = true
+        }
 
-        val fields = hashMapOf(
+        /*hashMapOf(
             "first name" to etFirstName.text.toString(),
             "surname" to etLastName.text.toString(),
             "birthday" to etBirthday.text.toString(),
             "sex" to actvSex.text.toString(),
             "priority group" to actvPriorityGroup.text.toString(),
-            "address" to etAddress.text.toString()
-        )
-
-        db.collection("users").document(UserData.userDocumentId).set(fields, SetOptions.merge())
+            "address" to etAddress.text.toString(),
+        )*/
     }
 
     private fun initUserInfo() {
-        val db = FirebaseFirestore.getInstance()
-
-        //retrieve user's saved info from the database, if there is
-        db.collection("users")
-            .whereEqualTo("mobile number", UserData.mobileNumber)
-            .get()
-            .addOnSuccessListener { query ->
-                if (query.size() > 0)
-                    for (document in query)
-                        if (document.contains("first name")) {
-                            etFirstName.setText(document.getString("first name"))
-                            etLastName.setText(document.getString("surname"))
-                            etBirthday.setText(document.getString("birthday"))
-                            actvSex.setText(document.getString("sex"))
-                            actvPriorityGroup.setText(document.getString("priority group"))
-                            etAddress.setText(document.getString("address"))
-                        }
+        val query = DB.createEqualToQuery("users", "mobile_number" to User.mobileNumber)
+        DB.readDocumentFromCollection(query) {
+            if(!it.isEmpty) {
+                val document = it.first()
+                if (document.contains("mobile_number")) {
+                    etFirstName.setText(document.getString("first_name"))
+                    etLastName.setText(document.getString("surname"))
+                    etBirthday.setText(document.getString("birthday"))
+                    actvSex.setText(document.getString("sex"))
+                    actvPriorityGroup.setText(document.getString("priority_group"))
+                    etAddress.setText(document.getString("address"))
+                }
             }
+        }
     }
 }

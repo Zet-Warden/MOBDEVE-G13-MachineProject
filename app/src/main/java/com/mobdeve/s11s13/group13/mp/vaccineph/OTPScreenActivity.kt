@@ -10,10 +10,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UserData
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.ViewRefocuser
 import kotlinx.android.synthetic.main.activity_otp_screen.*
 import java.util.concurrent.TimeUnit
@@ -118,12 +118,10 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
-
-                UserData.mobileNumber =
+                User.mobileNumber =
                     intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!! //assigns the mobile number of the user to a "static" variable in the UserData class for easy access
 
                 addUser() //adds the user's mobile number to the database
-
             }
             .addOnFailureListener {
                 errorToast.show()
@@ -139,44 +137,25 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     }
 
     private fun addUser() {
-        val db = FirebaseFirestore.getInstance() //instance of database
+        val query = DB.createEqualToQuery("users", "mobile_number" to User.mobileNumber)
 
-        //check if user is in the database already
-        db.collection("users")
-            .whereEqualTo("mobile number", UserData.mobileNumber)
-            .get()
-            .addOnSuccessListener { query ->
-                //user does not exist in the database yet
-                if (query.size() == 0) {
-                    //create new document
-                    val newUser = hashMapOf(
-                        "mobile number" to UserData.mobileNumber
-                    )
-                    db.collection("users").add(newUser)
-                        .addOnSuccessListener {
-                            println("added a new user to the database")
-                        }
-                        .addOnFailureListener {
-                            println("new user was not added successfully !! oh no rip")
-                        }
-                    val userIntent = Intent(this@OTPScreenActivity, UserScreenActivity::class.java)
-                    startActivity(userIntent) // go to user screen activity
-
+        DB.readDocumentFromCollection(query) {
+            val intent =
+                if (it.isEmpty) {
+                    //DB.createDocumentToCollection("users", mutableMapOf("mobile number" to User.mobileNumber))
+                    Intent(this, UserScreenActivity::class.java)
                 } else {
-                    if (query.documents[0].contains("first name")) {
-                        val homeIntent = Intent(this@OTPScreenActivity, HomeScreenActivity::class.java)
-                        startActivity(homeIntent) // go to user screen activity
+                    if (it.documents.first().contains("mobile_number")) {
+                        User.isRegistered = true
+                        Intent(this, HomeScreenActivity::class.java)
                     } else {
-                        val userIntent = Intent(this@OTPScreenActivity, UserScreenActivity::class.java)
-                        startActivity(userIntent) // go to home screen activity
+                        Intent(this, UserScreenActivity::class.java)
                     }
                 }
-
-                UserData.userDocumentId = query.documents[0].id
-            }
-            .addOnFailureListener { e ->
-                println(e)
-            }
+            startActivity(intent)
+        }.addOnFailureListener { e ->
+            println(e)
+        }
     }
 }
 

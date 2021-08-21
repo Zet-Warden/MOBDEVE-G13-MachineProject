@@ -1,8 +1,11 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
-
-object UserData {
-    var mobileNumber = "+63939 919 1889"
-    var userDocumentId = ""
-    var location = "dummy location"
-}
+data class UserData(
+    val first_name : String,
+    val surname : String,
+    val birthday : String,
+    val mobile_number : String,
+    val sex : String,
+    val priority_group : String,
+    val address : String,
+)
