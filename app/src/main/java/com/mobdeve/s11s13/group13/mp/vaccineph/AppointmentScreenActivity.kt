@@ -188,9 +188,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
             val appointment = documentTo.toObject(AppointmentData::class.java)!!
             appointment.mobileNumbers.add(User.mobileNumber)
             DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text} - ${User.location}", appointment)
+
         }
-        val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
-        newDoc.reference.update("count", FieldValue.increment(1))
+//        val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
+//        newDoc.reference.update("count", FieldValue.increment(1))
+
+        DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1) {
+            taken = it
+        }
     }
 
     private suspend fun getSavedDate(): String? {
