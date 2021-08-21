@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
@@ -167,6 +168,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
                     "mobileNumbers" to prevAppointment.mobileNumbers,
                 ) as Map<String, Any>
             )
+            querySnapshot.first().reference.update("count", FieldValue.increment(-1))
         }
 
         val documentTo = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
@@ -183,9 +185,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
             appointment.mobileNumbers.add(User.mobileNumber)
             DB.mergeDataToNamedDocument("appointments", "${tvAppointmentDate.text}", appointment)
         }
-
-
-
+        val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
+        newDoc.reference.update("count", FieldValue.increment(1))
 
         /*val _newAppointment: MutableMap<String, Any> = hashMapOf(
             "date" to tvAppointmentDate.text,
