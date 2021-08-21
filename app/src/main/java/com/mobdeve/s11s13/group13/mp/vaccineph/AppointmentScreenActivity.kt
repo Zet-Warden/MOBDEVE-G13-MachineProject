@@ -152,7 +152,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
         //val query = DB.createEqualToQueries("appointments", queryPairs)
         val db = FirebaseFirestore.getInstance()
-        val query = db.collection("appointments").document("${tvAppointmentDate.text} - ${User.location}")
+        val query = db.collection("appointments").document("${d.toFormattedString()} - ${User.location}")
         return query.get().await().getLong("count")!!.toInt()
     }
 
