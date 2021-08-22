@@ -156,7 +156,7 @@ object DB {
     suspend fun createAppointmentTransaction(
         collection: String,
         documentId: String,
-    ) : Boolean {
+    ): Boolean {
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection(collection).document(documentId)
         val maxRef = db.collection("vaccination centers").document("IGFv6WBHNmji9luGF2HZ")
@@ -168,13 +168,14 @@ object DB {
             val maxSnapShot = transaction.get(maxRef)
             val max = maxSnapShot.getLong("max capacity")?.toInt() ?: 0
 
-            val newCount : Int
-            if(size < max) {
+            val newCount: Int
+            if (size < max) {
                 newCount = size + 1
 
                 println("Does it exist? ${appointmentSnapShot.exists()}")
                 println(newCount)
-                val mobileNumbers = appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
+                val mobileNumbers =
+                    appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
                 mobileNumbers?.add(User.mobileNumber)
 
                 transaction.update(docRef, "count", newCount)
@@ -194,18 +195,15 @@ object DB {
 
         db.runTransaction { transaction ->
             val appointmentSnapShot = transaction.get(docRef)
-            val mobileNumbers = appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
+            val mobileNumbers =
+                appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
 
             mobileNumbers?.remove(User.mobileNumber)
             val size = appointmentSnapShot.getLong("count")?.toInt() ?: 0
-            val newCount = if(size != 0) size - 1 else size
+            val newCount = if (size != 0) size - 1 else size
 
-            if(newCount == 0) {
-                //docRef.delete()
-            } else {
-                transaction.update(docRef, "count", newCount)
-                transaction.update(docRef, "mobileNumbers", mobileNumbers)
-            }
+            transaction.update(docRef, "count", newCount)
+            transaction.update(docRef, "mobileNumbers", mobileNumbers)
 
         }.await()
     }
