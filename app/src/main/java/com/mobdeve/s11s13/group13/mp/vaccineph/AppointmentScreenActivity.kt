@@ -153,11 +153,6 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 "${appointmentDate.toFormattedString()} - ${User.location}",
                 newAppointment
             )
-            //look for the document again after creating
-            document = DB.asyncReadNamedDocumentFromCollection(
-                "appointments",
-                "${appointmentDate.toFormattedString()} - ${User.location}"
-            )
         }
 
         //create a transaction request for appointment

@@ -201,7 +201,7 @@ object DB {
             val newCount = if(size != 0) size - 1 else size
 
             if(newCount == 0) {
-                docRef.delete()
+                //docRef.delete()
             } else {
                 transaction.update(docRef, "count", newCount)
                 transaction.update(docRef, "mobileNumbers", mobileNumbers)
