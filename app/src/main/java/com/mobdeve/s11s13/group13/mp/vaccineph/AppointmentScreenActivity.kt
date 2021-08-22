@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
@@ -19,9 +19,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
-
-    private var max: Long = 0
-    private var taken: Int = 0
+    private var appointmentDate: Date = Calendar().time
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,23 +33,18 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        GlobalScope.launch(Dispatchers.IO) {
-            max = getMaxCap()
-            withContext(Dispatchers.Main) {
-                UIHider(this@AppointmentScreenActivity, clMainContainer)
-                ViewLinker.linkViewsAndActivities(
-                    this@AppointmentScreenActivity,
-                    NavBarLinker.createNavBarLinkPairs(
-                        btnHome,
-                        btnProfile,
-                        btnLocation,
-                        btnCalendar
-                    )
-                )
-                initSaveButton()
-                initCalendar()
-            }
-        }
+        UIHider(this@AppointmentScreenActivity, clMainContainer)
+        ViewLinker.linkViewsAndActivities(
+            this@AppointmentScreenActivity,
+            NavBarLinker.createNavBarLinkPairs(
+                btnHome,
+                btnProfile,
+                btnLocation,
+                btnCalendar
+            )
+        )
+        initSaveButton()
+        initCalendar()
     }
 
     private fun updateCalendarView() {
@@ -66,7 +59,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setInitialAppointmentDateTextAndCalendarFocus(dateString: String?, date: Date?) {
-        if (dateString == null || dateString == Calendar().time.toFormattedString()) {
+        if (dateString == null || dateString == Calendar().todayInFormattedString()) {
             tvAppointmentDate.text = "No appointment date set"
             println("No appointment in database")
         } else {
@@ -79,150 +72,124 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
     }
 
-
     private fun initCalendar() {
         //changes the date when user clicks on new date
         cvCalendar.setOnDateChangeListener { _, year, month, date ->
-            val selectedDate = Calendar().createDate(year, month, date)
-            cvCalendar.setDate(selectedDate.time, true, true)
+            appointmentDate = Calendar().createDate(year, month, date)
+            cvCalendar.setDate(appointmentDate.time, true, true)
         }
     }
 
     private fun initSaveButton() {
-        var selectedDate: Date
-        var prevDate: Date
-
         val saveDateMessage = Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT)
         val invalidDateMessage =
             Toast.makeText(this, "Invalid, resetting date", Toast.LENGTH_SHORT)
         val appointmentFullMessage =
             Toast.makeText(this, "Appointment for this day is full already", Toast.LENGTH_LONG)
+        val alreadyChosenMessage =
+            Toast.makeText(this, "You have already booked this appointment date", Toast.LENGTH_LONG)
 
         btnSave.setOnClickListener {
-            selectedDate = Date(cvCalendar.date)
+            appointmentDate = Date(cvCalendar.date)
             GlobalScope.launch(Dispatchers.IO) {
-                taken = getSlotsTaken(selectedDate)
-                prevDate = getSavedDate()?.toDateOrNull()!!
+                val prevDate = getSavedDate()?.toDateOrNull()!!
 
                 withContext(Dispatchers.Main) {
-                    if (isValidDate(selectedDate) && isAvailable()) {
-                        tvAppointmentDate.text = selectedDate.toFormattedString()
-                        saveToDatabase()
-                        saveDateMessage.show()
-                    } else {
-                        cvCalendar.setDate(
-                            prevDate.time,
-                            false,
-                            false
-                        ) //set the date to the last selected date that was valid
-                        if (!isValidDate(selectedDate))
-                            invalidDateMessage.show()
-                        else
+                    if (isValidDate(appointmentDate) && !isAlreadyChosenDate(appointmentDate)) {
+                        println(appointmentDate.toFormattedString())
+                        val result = saveToDatabase()
+                        if (result) {
+                            saveDateMessage.show()
+                            tvAppointmentDate.text = appointmentDate.toFormattedString()
+                        } else {
+                            cvCalendar.setDate(
+                                prevDate.time,
+                                false,
+                                false
+                            ) //set the date to the last selected date that was valid
                             appointmentFullMessage.show()
+                        }
+                    } else if (isAlreadyChosenDate(appointmentDate)) {
+                        alreadyChosenMessage.show()
+                    } else {
+                        invalidDateMessage.show()
                     }
                 }
             }
         }
     }
 
+    private fun isAlreadyChosenDate(date: Date): Boolean {
+        return tvAppointmentDate.text == date.toFormattedString()
+    }
+
     private fun isValidDate(date: Date): Boolean {
         return date.after(Calendar().getTomorrow())
     }
 
-    private fun isAvailable(): Boolean {
-        return taken < max
-    }
-
-    // gets the maximum number of people that can be vaccinated on a given day and location
-    private suspend fun getMaxCap(): Long {
-        val query = DB.createEqualToQuery("vaccination centers", "name" to User.location)
-        val document = DB.asyncReadDocumentFromCollection(query)
-
-        return document.first().getLong("max capacity") ?: 0
-    }
-
-    // gets the number of slots taken on a certain day
-    private suspend fun getSlotsTaken(d: Date): Int {
-        val date = d.toFormattedString()
-        val queryPairs = mutableListOf<Pair<String, Any?>>()
-
-        queryPairs.add("date" to date)
-        queryPairs.add("location" to User.location)
-
-        //val query = DB.createEqualToQueries("appointments", queryPairs)
-        val db = FirebaseFirestore.getInstance()
-        val query =
-            db.collection("appointments").document("${d.toFormattedString()} - ${User.location}")
-        return query.get().await().getLong("count")?.toInt() ?: 0
-    }
-
     // saves the user's appointment to the database
-    private suspend fun saveToDatabase() {
-        var query = DB.createEqualToQuery("appointments", "location" to User.location)
-        query = query.whereArrayContains("mobileNumbers", User.mobileNumber)
-        val querySnapshot = DB.asyncReadDocumentFromCollection(query)
+    private suspend fun saveToDatabase(): Boolean {
+        //cache user's previous appointment, so that it can be deleted if saveToDatabase is successful
+        val query =
+            DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
+        val querySnaphot = DB.asyncReadDocumentFromCollection(query)
 
-        //delete previous appointments
-        if (!querySnapshot.isEmpty) {
-            val prevAppointment = querySnapshot.first().toObject(AppointmentData::class.java)
-            println("here: $prevAppointment")
-            prevAppointment.mobileNumbers.remove(User.mobileNumber)
-            querySnapshot.first().reference.update(
-                hashMapOf(
-                    "mobileNumbers" to prevAppointment.mobileNumbers,
-                ) as Map<String, Any>
-            )
-            querySnapshot.first().reference.update("count", FieldValue.increment(-1))
-        }
-
-        val documentTo = DB.asyncReadNamedDocumentFromCollection(
+        var document = DB.asyncReadNamedDocumentFromCollection(
             "appointments",
-            "${tvAppointmentDate.text} - ${User.location}"
+            "${appointmentDate.toFormattedString()} - ${User.location}"
         )
-        if (!documentTo.exists()) {
-            val foo = suspend {
-                val newAppointment: MutableMap<String, Any> = hashMapOf(
-                    "date" to tvAppointmentDate.text,
-                    "location" to User.location,
-                    "mobileNumbers" to mutableListOf(User.mobileNumber),
-                    "count" to 0,
-                )
-                DB.createNamedDocumentToCollection(
-                    "appointments",
-                    "${tvAppointmentDate.text} - ${User.location}",
-                    newAppointment
-                )
-            }
 
-            DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1, foo) {
-                taken = it
-            }
-        } else {
-            DB.createTransaction("appointment", "${tvAppointmentDate.text} - ${User.location}", 1) {
-                taken = it
-                val appointment = documentTo.toObject(AppointmentData::class.java)!!
-                appointment.mobileNumbers.add(User.mobileNumber)
-                DB.mergeDataToNamedDocument(
-                    "appointments",
-                    "${tvAppointmentDate.text} - ${User.location}",
-                    appointment
-                )
-            }
-
+        if (!document.exists()) {
+            //default document content upon creation
+            val newAppointment: MutableMap<String, Any> = hashMapOf(
+                "date" to appointmentDate.toFormattedString(),
+                "location" to User.location,
+                "mobileNumbers" to mutableListOf<String>(),
+                "count" to 0,
+            )
+            //create a new document since it does not exist
+            DB.asyncMergeDataToNamedDocument(
+                "appointments",
+                "${appointmentDate.toFormattedString()} - ${User.location}",
+                newAppointment
+            )
+            //look for the document again after creating
+            document = DB.asyncReadNamedDocumentFromCollection(
+                "appointments",
+                "${appointmentDate.toFormattedString()} - ${User.location}"
+            )
         }
-//        val newDoc = DB.asyncReadNamedDocumentFromCollection("appointments", "${tvAppointmentDate.text} - ${User.location}")
-//        newDoc.reference.update("count", FieldValue.increment(1))
 
+        //create a transaction request for appointment
+        val result = DB.createAppointmentTransaction(
+            "appointments",
+            "${appointmentDate.toFormattedString()} - ${User.location}",
+        )
 
+        //if transaction is successful, add the mobile number to the document
+        //and delete previous appointment to avoid duplicated
+        if (result) {
+            /*val appointment = document.toObject(AppointmentData::class.java)!!
+            appointment.mobileNumbers.add(User.mobileNumber)
+            document.reference.update(hashMapOf("mobileNumbers" to appointment.mobileNumbers) as Map<String, Any>)*/
+            if(!querySnaphot.isEmpty) {
+                val querySnapShotId = querySnaphot.first().id
+                deleteAppointment(querySnapShotId)
+            }
+        }
+        return result
+    }
+
+    private suspend fun deleteAppointment(querySnapShotId: String) {
+       DB.deleteAppointmentTransaction("appointments", querySnapShotId)
     }
 
     private suspend fun getSavedDate(): String? {
-        //val query = DB.createEqualToQuery("appointments", "mobile_number" to User.mobileNumber)
         val query =
             DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
         val document = DB.asyncReadDocumentFromCollection(query)
 
-        if (document.isEmpty) return Calendar().time.toFormattedString()
+        if (document.isEmpty) return Calendar().todayInFormattedString() //default to today, if no previous saved date
         return document.first().getString("date")
     }
 }

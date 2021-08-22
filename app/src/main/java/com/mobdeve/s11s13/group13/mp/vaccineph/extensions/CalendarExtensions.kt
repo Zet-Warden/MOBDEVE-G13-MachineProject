@@ -27,3 +27,7 @@ fun Calendar.createDate(year: Int, month: Int, day: Int) : Date {
     calendar.set(year, month, day)
     return calendar.time
 }
+
+fun Calendar.todayInFormattedString() : String {
+    return Calendar().time.toFormattedString()
+}

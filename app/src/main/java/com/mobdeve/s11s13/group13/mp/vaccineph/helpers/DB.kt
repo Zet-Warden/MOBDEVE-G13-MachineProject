@@ -2,9 +2,6 @@ package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 object DB {
@@ -113,9 +110,13 @@ object DB {
             }
     }
 
-    fun mergeDataToNamedDocument(collection: String, documentId: String, data: Any) {
+    suspend fun asyncMergeDataToNamedDocument(
+        collection: String,
+        documentId: String,
+        data: Any,
+    ) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(collection).document(documentId).set(data, SetOptions.merge())
+        db.collection(collection).document(documentId).set(data, SetOptions.merge()).await()
     }
 
 
@@ -152,29 +153,62 @@ object DB {
         return db.collection(collection).whereArrayContains(query.first, query.second)
     }
 
-    fun createTransaction(
+    suspend fun createAppointmentTransaction(
         collection: String,
         documentId: String,
-        increment: Int,
-        foo: suspend () -> Unit = {},
-        callback: (Int) -> Unit
+    ) : Boolean {
+        val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection(collection).document(documentId)
+        val maxRef = db.collection("vaccination centers").document("IGFv6WBHNmji9luGF2HZ")
+
+        return db.runTransaction { transaction ->
+            val appointmentSnapShot = transaction.get(docRef)
+            val size = appointmentSnapShot.getLong("count")?.toInt() ?: 0
+
+            val maxSnapShot = transaction.get(maxRef)
+            val max = maxSnapShot.getLong("max capacity")?.toInt() ?: 0
+
+            val newCount : Int
+            if(size < max) {
+                newCount = size + 1
+
+                println("Does it exist? ${appointmentSnapShot.exists()}")
+                println(newCount)
+                val mobileNumbers = appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
+                mobileNumbers?.add(User.mobileNumber)
+
+                transaction.update(docRef, "count", newCount)
+                transaction.update(docRef, "mobileNumbers", mobileNumbers)
+                //newCount
+            }
+            size < max
+        }.await()
+    }
+
+    suspend fun deleteAppointmentTransaction(
+        collection: String,
+        documentId: String,
     ) {
         val db = FirebaseFirestore.getInstance()
         val docRef = db.collection(collection).document(documentId)
 
-        GlobalScope.launch(Dispatchers.IO) {
-            foo()
-            db.runTransaction { transaction ->
-                val snapshot = transaction.get(docRef)
-                val newCount = snapshot.getLong("count")!!.toInt() + increment
+        db.runTransaction { transaction ->
+            val appointmentSnapShot = transaction.get(docRef)
+            val mobileNumbers = appointmentSnapShot.toObject(AppointmentData::class.java)?.mobileNumbers
 
+            mobileNumbers?.remove(User.mobileNumber)
+            val size = appointmentSnapShot.getLong("count")?.toInt() ?: 0
+            val newCount = if(size != 0) size - 1 else size
 
+            if(newCount == 0) {
+                docRef.delete()
+            } else {
                 transaction.update(docRef, "count", newCount)
-                newCount
-            }.addOnSuccessListener {
-                callback(it)
+                transaction.update(docRef, "mobileNumbers", mobileNumbers)
             }
-        }
+
+        }.await()
     }
+
 
 }
