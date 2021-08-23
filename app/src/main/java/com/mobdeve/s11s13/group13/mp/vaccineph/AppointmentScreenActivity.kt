@@ -242,7 +242,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     /**
      * Gets the chosen appointment date of the User as recorded in the database
-     * @return the appointment date of the user in the database, null if it does not exist
+     * @return the appointment date of the User in the database, null if it does not exist
      */
     private suspend fun getSavedDate(): String? {
         val query =

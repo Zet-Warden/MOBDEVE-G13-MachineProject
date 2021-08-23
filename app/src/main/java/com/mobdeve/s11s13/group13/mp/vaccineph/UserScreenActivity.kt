@@ -190,22 +190,4 @@ class UserScreenActivity : AppCompatActivity() {
             }
         }
     }
-
-    /**
-     * Ping me, if you read this part of the documentation
-     *
-     * I thought I needed this, but found a better workaround
-     * Leaving this for posterity or might delete in the future idk
-     *
-     * Gets the position of sex from the dropdown menu
-     * @return the position of the sex string in the drop down menu, 0 if null or sex was not found
-     */
-    private fun getSexPosition(sex : String?): Int {
-        val sexArray = resources.getStringArray(R.array.sex_selection)
-        for((index, s) in sexArray.withIndex()) {
-            if(s == sex)
-                return index
-        }
-        return 0
-    }
 }
