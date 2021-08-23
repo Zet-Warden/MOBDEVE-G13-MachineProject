@@ -2,8 +2,10 @@ package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.ktx.getField
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.appointmentscreenactivityhelper.AppointmentData
 import kotlinx.coroutines.tasks.await
+import java.lang.reflect.GenericArrayType
 
 object DB {
 
@@ -297,7 +299,7 @@ object DB {
             // get the current count of people for this appointment
             val size = apptSnapshot.getLong("count")?.toInt()
                 ?: 0 //if field "count" does not exist, then default to 0
-
+            
             val vacCenterSnapshot = transaction.get(vaxCenterRef)
             // get the maximum capacity for specified vaccination center
             val max = vacCenterSnapshot.getLong("max capacity")?.toInt()

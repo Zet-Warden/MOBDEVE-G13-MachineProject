@@ -2,6 +2,7 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
@@ -70,7 +71,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
         if (dateString != null) {
             //assert date != null, improper date string format (should not happen)
             requireNotNull(date) { "date should not be null if dateString is not null, as all dates should be properly formatted" }
-            cvCalendar.date = date.time
+            cvCalendar.setDate(date.time, false, false)
             tvAppointmentDate.text = dateString
         } else {
             //no appointment date found in database
@@ -177,6 +178,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
      * @return true if User has successfully saved to the database
      */
     private suspend fun saveToDatabase(): Boolean {
+        startProgressBar()
         // cache user's previous appointment
         // so that it can be deleted at a later time
         val query =
@@ -223,7 +225,16 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 DB.deleteAppointmentTransaction(querySnapShotId)
             }
         }
+        endProgressBar()
         return result
+    }
+
+    private fun endProgressBar() {
+        pgProgressBar.visibility = View.GONE
+    }
+
+    private fun startProgressBar() {
+        pgProgressBar.visibility = View.VISIBLE
     }
 
     /**

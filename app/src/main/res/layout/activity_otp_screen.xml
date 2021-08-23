@@ -74,6 +74,17 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".85" />
 
+    <ProgressBar
+        android:id="@+id/pgProgressBar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVerifyOTP"
+        app:layout_constraintEnd_toStartOf="@+id/gl_end"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/btnVerifyOTP" />
+
     <Button
         android:id="@+id/btnVerifyOTP"
         android:layout_width="0dp"

@@ -3,6 +3,8 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.FirebaseException
@@ -12,7 +14,10 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.ViewRefocuser
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_otp_screen.*
+import kotlinx.android.synthetic.main.activity_otp_screen.clMainContainer
+import kotlinx.android.synthetic.main.activity_otp_screen.pgProgressBar
 import java.util.concurrent.TimeUnit
 
 class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
@@ -118,6 +123,7 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     }
 
     private fun authenticate(errorToast: Toast) {
+        startProgressBar()
         val otp =
             etOTPDigit1.text.toString() +
                     etOTPDigit2.text.toString() +
@@ -140,15 +146,36 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
 
                 //adds the user's mobile number to the database
                 launchNextActivity()
+                object : CountDownTimer(1000, 3000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                    }
+
+                    override fun onFinish() {
+                        endProgressBar()
+                    }
+                }.start()
             }
             .addOnFailureListener {
                 errorToast.show()
             }
     }
 
+    private fun startProgressBar() {
+        btnVerifyOTP.visibility = View.GONE
+        pgProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun endProgressBar() {
+        pgProgressBar.visibility = View.GONE
+        btnVerifyOTP.visibility = View.VISIBLE
+    }
+
+    /**
+     * Checks if all the OTP digits are not blank (strings composed entirely of the empty string or whitespaces)
+     */
     private fun isOTPDigitsCompletelyFilled(): Boolean {
         listOfOTPDigits.forEach {
-            if (it.text.isEmpty())
+            if (it.text.isBlank())
                 return@isOTPDigitsCompletelyFilled false
         }
         return true

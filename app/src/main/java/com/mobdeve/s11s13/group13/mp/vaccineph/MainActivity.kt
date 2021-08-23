@@ -5,6 +5,8 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.FirebaseException
@@ -16,6 +18,7 @@ import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ToastPool
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.PhoneNumberFormatter
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -46,6 +49,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendOTPAndLaunchNextActivity() {
+        startProgressBar()
+
         val mobileNumber =
             "+63" + etMobileNumberInput.text.toString() //adding country code to mobile number
         val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -65,6 +70,15 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 startActivity(loginIntent) // go to verify otp activity
+
+                object : CountDownTimer(1000, 3000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                    }
+
+                    override fun onFinish() {
+                        endProgressBar()
+                    }
+                }.start()
             }
         }
 
@@ -76,5 +90,15 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         PhoneAuthProvider.verifyPhoneNumber(options)
+    }
+
+    private fun startProgressBar() {
+        btnSendOTP.visibility = View.GONE
+        pgProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun endProgressBar() {
+        pgProgressBar.visibility = View.GONE
+        btnSendOTP.visibility = View.VISIBLE
     }
 }

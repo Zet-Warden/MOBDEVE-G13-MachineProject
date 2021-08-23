@@ -40,6 +40,17 @@
             app:srcCompat="@drawable/logo" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ProgressBar
+        android:id="@+id/pgProgressBar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/cvCalendar"
+        app:layout_constraintEnd_toStartOf="@+id/vgEnd"
+        app:layout_constraintStart_toStartOf="@+id/vgStart"
+        app:layout_constraintTop_toTopOf="@+id/cvCalendar" />
+
     <Button
         android:id="@+id/btnSave"
         android:layout_width="0dp"
