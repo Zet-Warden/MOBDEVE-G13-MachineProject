@@ -12,6 +12,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.KeyEnum
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.ToastPool
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.mainactivityhelper.PhoneNumberFormatter
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         init()
     }
 
@@ -33,15 +34,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initSendOTPButton() {
-        val loginToast = Toast.makeText(
-            this,
-            "Don't forget to fill your mobile number before proceeding.",
-            Toast.LENGTH_SHORT
-        )
+        val toast = ToastPool(this)
 
         btnSendOTP.setOnClickListener {
             if (etMobileNumberInput.text.length != 12) {
-                loginToast.show()
+                toast.incompletePhoneNumMessage.show()
             } else {
                 sendOTPAndLaunchNextActivity()
             }

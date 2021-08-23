@@ -31,9 +31,10 @@ object ViewLinker {
         errorMessage: Toast
     ) {
         view.setOnClickListener {
+            // return immediately if we are launching the same activity as the User is currently in
             if (app.javaClass == clazz) return@setOnClickListener
 
-            //start activity only if we have user record
+            //start activity only if User is flagged as registered
             if (User.isRegistered) {
                 app.startActivity(Intent(app, clazz))
                 app.finish()
