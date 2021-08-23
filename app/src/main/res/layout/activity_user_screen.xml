@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clMainContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    tools:context=".HomeScreenActivity">
+
+    <ImageView
+        android:id="@+id/ivBlueBanner"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/login_background" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clLogoGroup"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/circle"
+        app:layout_constraintBottom_toBottomOf="@+id/ivBlueBanner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/logo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="SAVE"
+        android:textSize="24sp"
+        app:backgroundTint="#0EDFC6"
+        app:cornerRadius="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/hdNavBar"
+        app:layout_constraintEnd_toEndOf="@+id/btnLocation"
+        app:layout_constraintStart_toEndOf="@+id/btnHome" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/navBarGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="vgEnd,hgBottom,btnHome,vgStart,btnLocation,btnCalendar,btnProfile,hdNavBar" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hgBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.92" />
+
+    <View
+        android:id="@+id/hdNavBar"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hgBottom" />
+
+    <ImageButton
+        android:id="@+id/btnHome"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:adjustViewBounds="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnProfile"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/vgStart"
+        app:layout_constraintTop_toBottomOf="@+id/hdNavBar"
+        app:srcCompat="@drawable/home"
+        app:tint="#72000000" />
+
+    <ImageButton
+        android:id="@+id/btnProfile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/btnHome"
+        app:layout_constraintEnd_toStartOf="@+id/btnLocation"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnHome"
+        app:layout_constraintTop_toTopOf="@+id/btnHome"
+        app:srcCompat="@drawable/user"
+        app:tint="#72000000" />
+
+    <ImageButton
+        android:id="@+id/btnLocation"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/btnHome"
+        app:layout_constraintEnd_toStartOf="@+id/btnCalendar"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnProfile"
+        app:layout_constraintTop_toTopOf="@+id/btnHome"
+        app:srcCompat="@drawable/location"
+        app:tint="#72000000" />
+
+    <ImageButton
+        android:id="@+id/btnCalendar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/btnHome"
+        app:layout_constraintEnd_toStartOf="@+id/vgEnd"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/btnLocation"
+        app:layout_constraintTop_toTopOf="@+id/btnHome"
+        app:srcCompat="@drawable/calendar"
+        app:tint="#72000000" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vgStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vgEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <TextView
+        android:id="@+id/tvPersonalInformationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Personal Information"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/vgEnd"
+        app:layout_constraintStart_toStartOf="@+id/vgStart"
+        app:layout_constraintTop_toBottomOf="@+id/ivBlueBanner" />
+
+    <EditText
+        android:id="@+id/etFirstName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/tvPersonalInformationLabel"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvPersonalInformationLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvPersonalInformationLabel" />
+
+    <EditText
+        android:id="@+id/etLastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="@+id/etFirstName"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/etFirstName"
+        app:layout_constraintTop_toBottomOf="@+id/etFirstName" />
+
+    <EditText
+        android:id="@+id/etBirthday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:cursorVisible="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="Birthday"
+        app:layout_constraintEnd_toEndOf="@+id/etFirstName"
+        app:layout_constraintStart_toStartOf="@+id/etLastName"
+        app:layout_constraintTop_toBottomOf="@+id/etLastName" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSex"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/tilPriorityGroup"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="@+id/etBirthday"
+        app:layout_constraintTop_toBottomOf="@+id/etBirthday">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvSex"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat"
+            android:hint="Sex"
+            android:includeFontPadding="false"
+            android:inputType="none"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="Male"
+            android:textSize="18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPriorityGroup"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/etBirthday"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tilSex"
+        app:layout_constraintTop_toTopOf="@+id/tilSex">
+
+        <AutoCompleteTextView
+            android:id="@+id/actvPriorityGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/montserrat"
+            android:hint="Priority Group"
+            android:includeFontPadding="false"
+            android:inputType="none"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="A1"
+            android:textSize="18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/border"
+        android:ems="10"
+        android:hint="Address"
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLength="100"
+        android:maxLines="4"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/tilPriorityGroup"
+        app:layout_constraintStart_toStartOf="@+id/tilSex"
+        app:layout_constraintTop_toBottomOf="@+id/tilSex" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

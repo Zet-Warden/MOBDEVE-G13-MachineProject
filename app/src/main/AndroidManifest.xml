@@ -9,22 +9,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MachineProjectTest">
+
         <activity
-            android:name="com.mobdeve.s11s13.group13.mp.vaccineph.OTPVerificationActivity"
+            android:name="com.mobdeve.s11s13.group13.mp.vaccineph.OTPScreenActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.HomeScreenActivity"
             android:screenOrientation="portrait">
 
         </activity>
+
+        <activity android:name=".AppointmentScreenActivity">
+
+
+
+        </activity>
+
         <activity
-            android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity"
+            android:name="com.mobdeve.s11s13.group13.mp.vaccineph.UserScreenActivity"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity"
+            android:screenOrientation="portrait">
+
         </activity>
     </application>
 
