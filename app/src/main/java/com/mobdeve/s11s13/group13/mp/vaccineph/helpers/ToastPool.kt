@@ -46,5 +46,12 @@ class ToastPool(context: Context) {
             "You have already booked this appointment date",
             Toast.LENGTH_LONG
         )
+
+    val savingToDBMessage: Toast =
+        Toast.makeText(
+            context,
+            "You appointment request is being processed. Please wait to select another appointment",
+            Toast.LENGTH_SHORT
+        )
     //endregion
 }

@@ -3,24 +3,34 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
+import kotlinx.android.synthetic.main.activity_user_screen.view.*
 import kotlinx.coroutines.*
 import java.util.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
     // represents the User's chosen date
-    private var appointmentDate: Date = Calendar().time
+    // global variable bad, should be refactored into a local variable
+    // and be passed into necessary functions
+    // problem is at [saveToDatabase]
+
+    //private var appointmentDate: Date = Calendar().time
+
+    // get a toast pool to choose different toast messages
+    private lateinit var toast: ToastPool
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_appointment_screen)
         init()
+        toast = ToastPool(this)
     }
 
     override fun onResume() {
@@ -87,7 +97,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
     private fun initCalendar() {
         cvCalendar.setOnDateChangeListener { _, year, month, date ->
             //changes the date (both in GUI and logic) when user clicks on new date
-            appointmentDate = Calendar().createDate(year, month, date)
+            val appointmentDate = Calendar().createDate(year, month, date)
             cvCalendar.setDate(appointmentDate.time, true, true)
         }
     }
@@ -120,12 +130,11 @@ class AppointmentScreenActivity : AppCompatActivity() {
      *  However, no appointment is made in the database, this is reflected in [tvAppointmentDate]
      */
     private suspend fun saveButtonAction() {
-        // get a toast pool to choose different toast messages
-        val toast = ToastPool(this)
-        if (isChosenDateValid() && !isDateAlreadyChosen()) {
+        val appointmentDate = getAppointmentDate()
+        if (isChosenDateValid(appointmentDate) && !isDateAlreadyChosen(appointmentDate)) {
             // check if saving to database is successful
             // it is successful only when the corresponding appointment document is not yet full
-            val result = saveToDatabase()
+            val result = saveToDatabase(appointmentDate)
             if (result) {
                 tvAppointmentDate.text = appointmentDate.toFormattedString()
                 toast.saveDateMessage.show()
@@ -133,7 +142,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 resetToPrevAppointmentDate()
                 toast.appointmentFullMessage.show()
             }
-        } else if (isDateAlreadyChosen()) {
+        } else if (isDateAlreadyChosen(appointmentDate)) {
             toast.alreadyChosenMessage.show()
         } else {
             resetToPrevAppointmentDate()
@@ -161,7 +170,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
      *
      * @return true if [tvAppointmentDate] is equal to [appointmentDate], as formatted in String
      */
-    private fun isDateAlreadyChosen(): Boolean {
+    private fun isDateAlreadyChosen(appointmentDate: Date): Boolean {
         return tvAppointmentDate.text == appointmentDate.toFormattedString()
     }
 
@@ -169,7 +178,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
      * Checks if the chosen date is the day after tomorrow
      * @return true if the [appointmentDate] is the day after tomorrow
      */
-    private fun isChosenDateValid(): Boolean {
+    private fun isChosenDateValid(appointmentDate: Date): Boolean {
         return appointmentDate.after(Calendar().getTomorrow())
     }
 
@@ -177,7 +186,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
      * Saves the User's appointment information to the database
      * @return true if User has successfully saved to the database
      */
-    private suspend fun saveToDatabase(): Boolean {
+    private suspend fun saveToDatabase(appointmentDate: Date): Boolean {
         startProgressBar()
         // cache user's previous appointment
         // so that it can be deleted at a later time
@@ -215,26 +224,41 @@ class AppointmentScreenActivity : AppCompatActivity() {
         // caching from earlier is necessary as this masks the previous appointment
         // store the result if the request, true if successful
         val result =
-            DB.createAppointmentTransaction("${appointmentDate.toFormattedString()} - ${User.location}", locationId)
+            DB.createAppointmentTransaction(
+                "${appointmentDate.toFormattedString()} - ${User.location}",
+                locationId
+            )
 
         // if transaction is successful, add the mobile number to the document
         // and delete previous appointment to avoid duplication
         if (result) {
             if (!querySnapShot.isEmpty) {
-                val querySnapShotId = querySnapShot.first().id
-                DB.deleteAppointmentTransaction(querySnapShotId)
+                //val querySnapShotId = querySnapShot.first().id
+                querySnapShot.forEach {
+                    DB.deleteAppointmentTransaction(it.id)
+                }
+
             }
         }
         endProgressBar()
         return result
     }
 
-    private fun endProgressBar() {
-        pgProgressBar.visibility = View.GONE
+    private fun startProgressBar() {
+        btnSave.visibility = View.GONE
+        pgProgressBar.visibility = View.VISIBLE
     }
 
-    private fun startProgressBar() {
-        pgProgressBar.visibility = View.VISIBLE
+    private fun endProgressBar() {
+        pgProgressBar.visibility = View.GONE
+        btnSave.visibility = View.VISIBLE
+    }
+
+    /**
+     * @return the date chosen by the User in the calendar
+     */
+    private fun getAppointmentDate(): Date {
+        return Date(cvCalendar.date)
     }
 
     /**
@@ -242,11 +266,11 @@ class AppointmentScreenActivity : AppCompatActivity() {
      * This is checked in the "vaccine centers" collections
      * @return the name of the document where User location is currently set to
      */
-    private suspend fun getUserLocationId() : String {
+    private suspend fun getUserLocationId(): String {
         val locQuery = DB.createEqualToQuery("vaccination centers", "name" to User.location)
         val locationDocs = DB.asyncReadDocumentFromCollection(locQuery)
         var locationId = "none"
-        if(!locationDocs.isEmpty)
+        if (!locationDocs.isEmpty)
             locationId = locationDocs.first().id
         return locationId
     }
