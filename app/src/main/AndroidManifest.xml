@@ -45,7 +45,6 @@
         <activity
             android:name=".UserScreenActivity"
             android:screenOrientation="portrait" />
-        </activity>
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity"
             android:screenOrientation="portrait">
