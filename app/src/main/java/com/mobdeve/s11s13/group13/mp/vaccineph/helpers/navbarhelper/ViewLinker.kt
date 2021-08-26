@@ -16,7 +16,7 @@ object ViewLinker {
     ) {
         val message = Toast.makeText(
             app,
-            "Please give us ur data, before using the app :)",
+            "Please fill up the personal details form first.",
             Toast.LENGTH_SHORT
         )
         for (view in views) {
