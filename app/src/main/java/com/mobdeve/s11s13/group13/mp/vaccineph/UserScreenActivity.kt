@@ -3,6 +3,8 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
@@ -13,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
+
 
 class UserScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -187,6 +190,29 @@ class UserScreenActivity : AppCompatActivity() {
                     actvPriorityGroup.setText(document.getString("priorityGroup"), false)
                     etAddress.setText(document.getString("address"))
                 }
+            }
+        }
+    }
+    private fun convertAddress() {
+        val address = etAddress.text.toString()
+        val location = GeoCodingLocation()
+
+
+
+    }
+    companion object {
+        private class GeoCoderHandler(private val MapsFragment : MapsFragment) :
+            Handler() {
+            override fun handleMessage(message: Message) {
+                val locationAddress: String? = when (message.what) {
+                    1 -> {
+                        val bundle = message.data
+                        bundle.getString("address")
+                    }
+                    else -> null
+                }
+                println("ADDRESS: $locationAddress")
+                //TODO insert to database
             }
         }
     }

@@ -3,6 +3,7 @@ package com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper
 import android.view.View
 import com.mobdeve.s11s13.group13.mp.vaccineph.AppointmentScreenActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.HomeScreenActivity
+import com.mobdeve.s11s13.group13.mp.vaccineph.MapsScreenActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.UserScreenActivity
 
 object NavBarLinker {
@@ -17,7 +18,7 @@ object NavBarLinker {
 
         list.add(Pair(btnHome, HomeScreenActivity::class.java))
         list.add(Pair(btnProfile, UserScreenActivity::class.java))
-        list.add(Pair(btnLocation, UserScreenActivity::class.java))
+        list.add(Pair(btnLocation, MapsScreenActivity::class.java))
         list.add(Pair(btnCalendar, AppointmentScreenActivity::class.java))
 
         return list
