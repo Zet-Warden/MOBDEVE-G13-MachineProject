@@ -1,3 +1,8 @@
+/**
+ * This file is used to extend the functionality of Calendar.java
+ * As such, the receiver of extension functions used in this file should only be for Calendar.java
+ */
+
 package com.mobdeve.s11s13.group13.mp.vaccineph.extensions
 
 import java.util.*
@@ -30,4 +35,16 @@ fun Calendar.createDate(year: Int, month: Int, day: Int) : Date {
 
 fun Calendar.todayInFormattedString() : String {
     return Calendar().time.toFormattedString()
+}
+
+fun Calendar.getYear() : Int {
+    return this.get(YEAR)
+}
+
+fun Calendar.getMonth() : Int {
+    return this.get(MONTH)
+}
+
+fun Calendar.getDate() : Int {
+    return this.get(DATE)
 }

@@ -6,19 +6,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_user_screen.*
 import kotlinx.android.synthetic.main.activity_user_screen.btnSave
 import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
-import java.text.SimpleDateFormat
-import java.util.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
+import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
+
 
 class UserScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +26,14 @@ class UserScreenActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
+        initSexComboBox()
+        initPriorityGroupComboBox()
         initUserInfo()
     }
 
+    /**
+     * Initializes components
+     */
     private fun init() {
         UIHider(this, clMainContainer)
         ViewLinker.linkViewsAndActivities(
@@ -43,80 +44,99 @@ class UserScreenActivity : AppCompatActivity() {
         initSexComboBox()
         initPriorityGroupComboBox()
         initSaveButton()
-
         initUserInfo()
     }
 
+    /**
+     * Initializes the save button onClickListener
+     *
+     * Allow saving of information only if
+     *   > everything is filled up
+     *   > the User is of legal age
+     */
     private fun initSaveButton() {
-        val incompleteMessage =
-            Toast.makeText(this, "Please enter information for all fields.", Toast.LENGTH_SHORT)
-        val notOfAgeMessage =
-            Toast.makeText(this, "You must be 18 and above to get vaccinated.", Toast.LENGTH_SHORT)
-        val saveMessage =
-            Toast.makeText(this, "Your profile has been saved.", Toast.LENGTH_SHORT)
+        val toast = ToastPool(this)
 
         btnSave.setOnClickListener {
             if (!isEverythingFilledUp()) {
-                incompleteMessage.show()
+                toast.incompleteInfoMessage.show()
             } else if (!isOfLegalAge()) {
-                notOfAgeMessage.show()
+                toast.notOfAgeMessage.show()
             } else {
                 // add or update the database on save
                 saveToDatabase()
-                saveMessage.show()
+                toast.successfulSaveMessage.show()
             }
         }
     }
 
+    /**
+     * Checks if the User is 18 years old or above
+     * @return true if the User is at least 18 years old
+     */
     private fun isOfLegalAge(): Boolean {
-        val currentCalendar = Calendar.getInstance()
-        val userCalendar = Calendar.getInstance()
+        val currentCalendar = Calendar()
+        val userCalendar = Calendar()
+
+        // assert that the text from etBirthday can always be parsed into a Data type
+        // this is because a dialog box will be used when filling up the birthday field
+        // to ensure proper format
         userCalendar.time = etBirthday.text.toString().toDateOrNull()!!
 
-        if (currentCalendar.get(Calendar.YEAR) - userCalendar.get(Calendar.YEAR) < 18) return false
-        if (currentCalendar.get(Calendar.YEAR) - userCalendar.get(Calendar.YEAR) > 18) return true
+        if (currentCalendar.getYear() - userCalendar.getYear() < 18) return false
+        if (currentCalendar.getYear() - userCalendar.getYear() > 18) return true
 
-        if (userCalendar.get(Calendar.MONTH) > currentCalendar.get(Calendar.MONTH)) return false
-        if (userCalendar.get(Calendar.MONTH) < currentCalendar.get(Calendar.MONTH)) return true
+        if (userCalendar.getMonth() > currentCalendar.getMonth()) return false
+        if (userCalendar.getMonth() < currentCalendar.getMonth()) return true
 
-        return userCalendar.get(Calendar.DATE) <= currentCalendar.get(Calendar.DATE)
+        return userCalendar.getDate() <= currentCalendar.getDate()
     }
 
+    /**
+     * Initializes the calendar dialog when filling up the birthday field
+     * This ensures that all dates are in the same format
+     * The format is defined in DateExtension.kt
+     */
     private fun initBirthdayCalendarDialog() {
-        val myCalendar = Calendar.getInstance()
-        val updateLabel = fun(date: Date) {
-            val sdf = SimpleDateFormat("MMMM d, yyyy", Locale.US)
-            etBirthday.setText(sdf.format(date))
-        }
+        val myCalendar = Calendar()
 
-        val date =
+        // a date listener that sets the date of the birthday field to the chosen date of the user
+        val dateListener =
             OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                myCalendar.set(Calendar.YEAR, year)
-                myCalendar.set(Calendar.MONTH, monthOfYear)
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                updateLabel(myCalendar.time)
+                val date = Calendar().createDate(year, monthOfYear, dayOfMonth)
+                etBirthday.setText(date.toFormattedString())
             }
 
         etBirthday.setOnClickListener {
             DatePickerDialog(
-                this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)
+                this, dateListener, myCalendar.getYear(), myCalendar.getMonth(),
+                myCalendar.getDate()
             ).show()
         }
     }
 
+    /**
+     * Initialize comboBox for sex
+     */
     private fun initSexComboBox() {
         val sexes = resources.getStringArray(R.array.sex_selection)
         val sexArrayAdapter = ArrayAdapter(this, R.layout.dropdown_item, sexes)
         actvSex.setAdapter(sexArrayAdapter)
     }
 
+    /**
+     * Initialize comboBox for priority group
+     */
     private fun initPriorityGroupComboBox() {
         val priorityGroups = resources.getStringArray(R.array.priority_selection)
         val priorityGroupArrayAdapter = ArrayAdapter(this, R.layout.dropdown_item, priorityGroups)
         actvPriorityGroup.setAdapter(priorityGroupArrayAdapter)
     }
 
+    /**
+     * Checks if every field is filled up
+     * @return true if all fields are not blank (not composed entirely of the empty string or whitespaces)
+     */
     private fun isEverythingFilledUp(): Boolean {
         return etFirstName.text.isNotBlank() &&
                 etLastName.text.isNotBlank() &&
@@ -126,41 +146,48 @@ class UserScreenActivity : AppCompatActivity() {
                 etAddress.text.isNotBlank()
     }
 
+    /**
+     * Saves user information to the database
+     * If save is successful, flag User as registered
+     */
     private fun saveToDatabase() {
-        val fields = UserData(
-            etFirstName.text.toString(),
-            etLastName.text.toString(),
-            etBirthday.text.toString(),
-            User.mobileNumber,
-            actvSex.text.toString(),
-            actvPriorityGroup.text.toString(),
-            etAddress.text.toString(),
-        )
-        DB.createDocumentToCollection("users", fields) {
-            User.isRegistered = true
-        }
+        val fields = hashMapOf(
+            "firstName" to "${etFirstName.text}",
+            "surname" to "${etLastName.text}",
+            "birthday" to "${etBirthday.text}",
+            "mobileNumber" to User.mobileNumber,
+            "sex" to "${actvSex.text}",
+            "priorityGroup" to "${actvPriorityGroup.text}",
+            "address" to "${etAddress.text}",
+        ) as HashMap<String, Any>
 
-        /*hashMapOf(
-            "first name" to etFirstName.text.toString(),
-            "surname" to etLastName.text.toString(),
-            "birthday" to etBirthday.text.toString(),
-            "sex" to actvSex.text.toString(),
-            "priority group" to actvPriorityGroup.text.toString(),
-            "address" to etAddress.text.toString(),
-        )*/
+        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+        DB.readDocumentFromCollection(query) {
+            if(it.isEmpty) {
+                DB.createDocumentToCollection("users", fields) {
+                    User.isRegistered = true
+                }
+            } else {
+                DB.updateDocumentFromCollection(query, fields)
+            }
+        }
     }
 
+    /**
+     * Initialize the User information upon going to this activity, if the User already has information in the database
+     * This makes it easy for the User to edit their information
+     */
     private fun initUserInfo() {
-        val query = DB.createEqualToQuery("users", "mobile_number" to User.mobileNumber)
+        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
         DB.readDocumentFromCollection(query) {
-            if(!it.isEmpty) {
+            if (!it.isEmpty) {
                 val document = it.first()
-                if (document.contains("mobile_number")) {
-                    etFirstName.setText(document.getString("first_name"))
+                if (document.contains("mobileNumber")) {
+                    etFirstName.setText(document.getString("firstName"))
                     etLastName.setText(document.getString("surname"))
                     etBirthday.setText(document.getString("birthday"))
-                    actvSex.setText(document.getString("sex"))
-                    actvPriorityGroup.setText(document.getString("priority_group"))
+                    actvSex.setText(document.getString("sex"), false)
+                    actvPriorityGroup.setText(document.getString("priorityGroup"), false)
                     etAddress.setText(document.getString("address"))
                 }
             }

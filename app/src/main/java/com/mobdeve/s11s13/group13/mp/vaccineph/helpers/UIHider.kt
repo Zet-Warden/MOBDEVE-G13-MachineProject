@@ -8,12 +8,12 @@ import android.view.View
 
 /**
  * Creates an object that hides System status and navigation bar
+ *
  * If the user opts to make the status and navigation bar appear again, it waits for a certain time
  * then hides the System status and navigation bar again
  *
- * Parameters:
- * app : Activity - the activity that will hide the System UI
- * clMainContainer : View - the main container of the activity
+ * @param[app] - the activity that will hide the System UI
+ * @param[clMainContainer] - the main container of the activity
  */
 class UIHider(
     private val app: Activity,

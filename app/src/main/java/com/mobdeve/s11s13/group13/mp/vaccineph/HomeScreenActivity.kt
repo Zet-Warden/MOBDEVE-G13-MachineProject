@@ -2,22 +2,16 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeFeedData
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeFeedDataGenerator
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.homescreenactivityhelper.HomeScreenRvAdapter
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
+import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_home_screen.*
-import kotlinx.android.synthetic.main.activity_home_screen.btnCalendar
-import kotlinx.android.synthetic.main.activity_home_screen.btnHome
-import kotlinx.android.synthetic.main.activity_home_screen.btnLocation
-import kotlinx.android.synthetic.main.activity_home_screen.btnProfile
-import kotlinx.android.synthetic.main.activity_home_screen.clMainContainer
 
 
 class HomeScreenActivity : AppCompatActivity() {
@@ -30,8 +24,10 @@ class HomeScreenActivity : AppCompatActivity() {
         init()
     }
 
+    /**
+     * Initialize components of the activity
+     */
     private fun init() {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         UIHider(this, clMainContainer)
         initRecyclerView()
         ViewLinker.linkViewsAndActivities(
@@ -40,6 +36,9 @@ class HomeScreenActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Initializes the recycler view
+     */
     private fun initRecyclerView() {
         feedDataList = HomeFeedDataGenerator.generateData()
 
@@ -57,10 +56,11 @@ class HomeScreenActivity : AppCompatActivity() {
         val helper = PagerSnapHelper()
         helper.attachToRecyclerView(rvHomeScreen)
 
-        //get the 'first item' nearest to the middle of the RecyclerView
+        // get the 'first item' nearest to the middle of the RecyclerView
         var midPoint = Int.MAX_VALUE / 2
         midPoint -= (midPoint % feedDataList.size)
 
+        // ensure that the first time content is shown, it is centered
         rvHomeScreen.scrollToPosition(midPoint - 1)
         rvHomeScreen.smoothScrollToPosition(midPoint)
     }

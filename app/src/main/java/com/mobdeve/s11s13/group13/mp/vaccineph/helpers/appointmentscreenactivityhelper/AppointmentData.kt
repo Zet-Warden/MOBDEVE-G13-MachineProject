@@ -1,4 +1,4 @@
-package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
+package com.mobdeve.s11s13.group13.mp.vaccineph.helpers.appointmentscreenactivityhelper
 
 data class AppointmentData(
     val date : String = "",

@@ -40,11 +40,23 @@
             app:srcCompat="@drawable/logo" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <ProgressBar
+        android:id="@+id/pgProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/hgBottom"
+        app:layout_constraintEnd_toStartOf="@+id/vgEnd"
+        app:layout_constraintStart_toStartOf="@+id/vgStart"
+        app:layout_constraintTop_toBottomOf="@+id/tvAppointmentDate" />
+
     <Button
         android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="SAVE"
@@ -53,7 +65,8 @@
         app:cornerRadius="100dp"
         app:layout_constraintBottom_toTopOf="@+id/hdNavBar"
         app:layout_constraintEnd_toEndOf="@+id/btnLocation"
-        app:layout_constraintStart_toEndOf="@+id/btnHome" />
+        app:layout_constraintStart_toEndOf="@+id/btnHome"
+        app:layout_constraintTop_toBottomOf="@+id/tvAppointmentDate" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/navBarGroup"
@@ -173,7 +186,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:dateTextAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintBottom_toTopOf="@+id/hgBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -192,6 +205,7 @@
         app:layout_constraintEnd_toStartOf="@+id/vgEnd"
         app:layout_constraintStart_toStartOf="@+id/vgStart"
         app:layout_constraintTop_toBottomOf="@+id/cvCalendar"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
@@ -203,7 +217,7 @@
         android:text="December 28, 2021"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnSave"
+        app:layout_constraintBottom_toTopOf="@+id/hgBottom"
         app:layout_constraintEnd_toStartOf="@+id/vgEnd"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/vgStart"
