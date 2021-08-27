@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_otp_screen.clMainContainer
 import kotlinx.android.synthetic.main.activity_otp_screen.pgProgressBar
 import java.util.concurrent.TimeUnit
 
-class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
+class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var verificationId: String
 
@@ -157,6 +157,14 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             }
             .addOnFailureListener {
                 errorToast.show()
+                object : CountDownTimer(1000, 3000) {
+                    override fun onTick(millisUntilFinished: Long) {
+                    }
+
+                    override fun onFinish() {
+                        endProgressBar()
+                    }
+                }.start()
             }
     }
 

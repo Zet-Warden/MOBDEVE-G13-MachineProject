@@ -52,15 +52,16 @@ class MapsFragment : Fragment() {
 
         //TODO Implement GetAssignedCenter ( gets which vacc center user is assigned to)
 
-        val query = DB.createEqualToQuery("users","mobile_number" to User.mobileNumber)
-        DB.readDocumentFromCollection(query){
-            var center = it.first().getString("VaccineCenter")
-            if (center.equals(null))
-                readDbfromCoords(center)
-            else{
-                changecamera()
-            }
-        }
+        readDbfromCoords("Robinsons Place Manila")
+//        val query = DB.createEqualToQuery("users","mobile_number" to User.mobileNumber)
+//        DB.readDocumentFromCollection(query){
+//            var center = it.first().getString("VaccineCenter")
+//            if (center.equals(null))
+//                readDbfromCoords(center)
+//            else{
+//                changecamera()
+//            }
+//        }
 
     }
 

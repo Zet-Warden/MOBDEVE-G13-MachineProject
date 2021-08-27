@@ -13,13 +13,13 @@ object HomeFeedDataGenerator {
         info1 = info1.replace("\n", "\n\n")
 
         feedDataList.add(
-            HomeFeedData("How to die", info1)
+            HomeFeedData("Before Vaccination", info1)
         )
         feedDataList.add(
-            HomeFeedData("At the Vaccine Center2", info1)
+            HomeFeedData("At the Vaccine Center", info1)
         )
         feedDataList.add(
-            HomeFeedData("At the Vaccine Center3", info1)
+            HomeFeedData("After Vaccination", info1)
         )
         return feedDataList
     }
