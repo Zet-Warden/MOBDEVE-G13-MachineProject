@@ -5,8 +5,11 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.location.Location;
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.GeoPoint
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_user_screen.*
@@ -15,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
+import android.widget.Toast.makeText as makeText1
 
 
 class UserScreenActivity : AppCompatActivity() {
@@ -22,6 +26,7 @@ class UserScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_screen)
         init()
+
     }
 
     override fun onResume() {
@@ -171,6 +176,7 @@ class UserScreenActivity : AppCompatActivity() {
                 DB.updateDocumentFromCollection(query, fields)
             }
         }
+        convertAddressAndAssign()
     }
 
     /**
@@ -193,26 +199,73 @@ class UserScreenActivity : AppCompatActivity() {
             }
         }
     }
-    private fun convertAddress() {
+    private fun convertAddressAndAssign() {
         val address = etAddress.text.toString()
         val location = GeoCodingLocation()
+        location.getAddressFromLocation(address,applicationContext,GeoCoderHandler(this))
+    }
 
 
+    private fun assignCenter() {
+//        Iterate through arraylist and add to vaccinecenter locations
+//        for (item in db) {
+//            var location = Location(item)
+//            location.latitude = 12.242
+//            location.longitude = 120.2525
+//            vaccineCenters.add(location)
+//        }
+        // get distances of each vaccine center to address
+        //get min
+        //assign min as assigned vaccine center
+        //                userAdd.distanceTo()
 
     }
+
     companion object {
-        private class GeoCoderHandler(private val MapsFragment : MapsFragment) :
-            Handler() {
+
+        private class GeoCoderHandler(private val userScreenActivity: UserScreenActivity) : Handler() {
+
             override fun handleMessage(message: Message) {
-                val locationAddress: String? = when (message.what) {
+                val locationAddress: DoubleArray? = when (message.what) {
                     1 -> {
                         val bundle = message.data
-                        bundle.getString("address")
+                        bundle.getDoubleArray("address")
                     }
                     else -> null
                 }
-                println("ADDRESS: $locationAddress")
-                //TODO insert to database
+//                val loc = locationAddress!!
+                val userAdd = Location("Cur_Loc")
+                println(locationAddress)
+                if ( locationAddress != null) {
+                    userAdd.latitude = locationAddress?.get(0)!!
+                    userAdd.longitude = locationAddress?.get(1)!!
+                }
+                else{
+                    userAdd.latitude = 14.57249771
+                    userAdd.longitude = 120.983662732
+                }
+
+                var vaccineCenters = ArrayList<Location>()
+                val query = DB.createEqualToQueries("vaccination centers", mutableListOf())
+                DB.readDocumentFromCollection(query) {
+                    it.forEach { elem ->
+                        var loc = Location(elem.getString("name"))
+                        loc.longitude = elem.getGeoPoint("location")?.longitude!!.toDouble()
+                        loc.latitude = elem.getGeoPoint("location")?.latitude!!.toDouble()
+                        vaccineCenters.add(loc)
+
+                    }
+                    var distances = ArrayList<Float>()
+                    println("PRINT VACCINE CENTERS")
+                    vaccineCenters.forEach{elem ->
+                        val diff = userAdd.distanceTo(elem)
+                        distances.add(diff)
+                    }
+                    println(vaccineCenters[distances.indexOf(distances.minOrNull())].provider)
+                    //TODO ADD ^ to current user as assigned center
+
+                }
+
             }
         }
     }
