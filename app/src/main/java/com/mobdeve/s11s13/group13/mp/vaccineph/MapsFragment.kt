@@ -29,8 +29,8 @@ class MapsFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
     private val collectionName = "vaccination centers"
-    private var lat = 14.564
-    private var long = 120.9931
+    private var lat = 100.0
+    private var long = 14.00
     private lateinit var map : GoogleMap
 
 
@@ -52,16 +52,18 @@ class MapsFragment : Fragment() {
 
         //TODO Implement GetAssignedCenter ( gets which vacc center user is assigned to)
 
-        readDbfromCoords("Robinsons Place Manila")
-//        val query = DB.createEqualToQuery("users","mobile_number" to User.mobileNumber)
-//        DB.readDocumentFromCollection(query){
-//            var center = it.first().getString("VaccineCenter")
-//            if (center.equals(null))
-//                readDbfromCoords(center)
-//            else{
-//                changecamera()
-//            }
-//        }
+//        readDbfromCoords("Robinsons Place Manila")
+        val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
+        DB.readDocumentFromCollection(query){
+            if (it.first().contains("assignedCenter")){
+                var center = it.first().getString("assignedCenter")
+                if (!center.equals(null))
+                    readDbfromCoords(center)
+                else{
+                    changecamera()
+                }
+            }
+        }
 
     }
 

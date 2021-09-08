@@ -171,12 +171,14 @@ class UserScreenActivity : AppCompatActivity() {
             if(it.isEmpty) {
                 DB.createDocumentToCollection("users", fields) {
                     User.isRegistered = true
+                    convertAddressAndAssign()
                 }
             } else {
                 DB.updateDocumentFromCollection(query, fields)
+                convertAddressAndAssign()
             }
         }
-        convertAddressAndAssign()
+
     }
 
     /**
@@ -205,27 +207,13 @@ class UserScreenActivity : AppCompatActivity() {
         location.getAddressFromLocation(address,applicationContext,GeoCoderHandler(this))
     }
 
-
-    private fun assignCenter() {
-//        Iterate through arraylist and add to vaccinecenter locations
-//        for (item in db) {
-//            var location = Location(item)
-//            location.latitude = 12.242
-//            location.longitude = 120.2525
-//            vaccineCenters.add(location)
-//        }
-        // get distances of each vaccine center to address
-        //get min
-        //assign min as assigned vaccine center
-        //                userAdd.distanceTo()
-
-    }
-
     companion object {
 
         private class GeoCoderHandler(private val userScreenActivity: UserScreenActivity) : Handler() {
 
             override fun handleMessage(message: Message) {
+
+                println("ASSIGNING LOCATION")
                 val locationAddress: DoubleArray? = when (message.what) {
                     1 -> {
                         val bundle = message.data
@@ -247,6 +235,7 @@ class UserScreenActivity : AppCompatActivity() {
 
                 var vaccineCenters = ArrayList<Location>()
                 val query = DB.createEqualToQueries("vaccination centers", mutableListOf())
+
                 DB.readDocumentFromCollection(query) {
                     it.forEach { elem ->
                         var loc = Location(elem.getString("name"))
@@ -255,18 +244,50 @@ class UserScreenActivity : AppCompatActivity() {
                         vaccineCenters.add(loc)
 
                     }
+
                     var distances = ArrayList<Float>()
-                    println("PRINT VACCINE CENTERS")
+
                     vaccineCenters.forEach{elem ->
                         val diff = userAdd.distanceTo(elem)
                         distances.add(diff)
                     }
+
                     println(vaccineCenters[distances.indexOf(distances.minOrNull())].provider)
+                    val assigned = vaccineCenters[distances.indexOf(distances.minOrNull())].provider
                     //TODO ADD ^ to current user as assigned center
+                    val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
+                    DB.readDocumentFromCollection(query){ ft ->
+                        if (!ft.isEmpty) {
+                            val document = ft.first();
+                            if (document.contains("mobileNumber")) {
+                                val firstName = document.getString("firstName")
+                                val surname = document.getString("surName")
+                                val birthday = document.getString("birthday")
+                                val sex = document.getString("sex")
+                                val priority = document.getString("priorityGroup")
+                                val address = document.getString("address")
+                                //etc etc save the info to local variables
+                                val fields = hashMapOf(
+                                    "firstName" to firstName,
+                                    "surname" to surname,
+                                    "birthday" to birthday,
+                                    "mobileNumber" to User.mobileNumber,
+                                    "sex" to sex,
+                                    "priorityGroup" to priority,
+                                    "address" to address,
+                                    "assignedCenter" to assigned,
+                                ) as HashMap<String, Any>
+                                //create a hashmap here then
+                                DB.updateDocumentFromCollection(query, fields)
+                                println("saving")
+                            }
 
                 }
 
             }
         }
     }
+        }
+    }
 }
+
