@@ -6,7 +6,7 @@ object HomeFeedDataGenerator {
         val feedDataList = mutableListOf<HomeFeedData>()
 
         var info1 = "Carry a mask that covers your nose and mouth.\n" +
-                "Prepare proof of your vaccine appointment as well as your valid ID."
+                "Prepare proof of your vaccine appointment as well as your valid ID.\n"
                 "Wear loose or short sleeves that can be rolled up easily\n" +
                 "Cancel your appointment if you have COVID-19 or the symptoms.\n"
 
