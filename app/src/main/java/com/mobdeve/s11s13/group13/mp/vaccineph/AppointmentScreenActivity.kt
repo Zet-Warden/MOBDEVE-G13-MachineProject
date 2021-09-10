@@ -1,6 +1,7 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Intent
 import android.os.Bundle
 import android.provider.CalendarContract
@@ -316,7 +317,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long) {
         val intent = Intent(Intent.ACTION_INSERT).apply {
-            data = CalendarContract.Events.CONTENT_URI
+            //data = CalendarContract.Events.CONTENT_URI
+            data = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, 1)
             putExtra(CalendarContract.EXTRA_EVENT_ID, User.mobileNumber)
             putExtra(CalendarContract.Events.TITLE, title)
             putExtra(CalendarContract.Events.EVENT_LOCATION, location)
@@ -335,5 +337,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
     private fun deletePrevious() {
         //check first if there is an event in the calendar with the same calendar id as the user's mobile number
         //then delete?
+        val deleteUri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, 1)
+        contentResolver.delete(deleteUri, null, null)
     }
 }
