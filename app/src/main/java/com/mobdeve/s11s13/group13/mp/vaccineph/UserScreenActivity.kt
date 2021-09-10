@@ -7,9 +7,7 @@ import android.os.Handler
 import android.os.Message
 import android.location.Location;
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.GeoPoint
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_user_screen.*
@@ -18,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_user_screen.clMainContainer
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.toDateOrNull
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
-import android.widget.Toast.makeText as makeText1
 
 
 class UserScreenActivity : AppCompatActivity() {
@@ -204,12 +201,12 @@ class UserScreenActivity : AppCompatActivity() {
     private fun convertAddressAndAssign() {
         val address = etAddress.text.toString()
         val location = GeoCodingLocation()
-        location.getAddressFromLocation(address,applicationContext,GeoCoderHandler(this))
+        location.getAddressFromLocation(address,applicationContext,GeoCoderHandler())
     }
 
     companion object {
 
-        private class GeoCoderHandler(private val userScreenActivity: UserScreenActivity) : Handler() {
+        private class GeoCoderHandler : Handler() {
 
             override fun handleMessage(message: Message) {
 
@@ -221,31 +218,26 @@ class UserScreenActivity : AppCompatActivity() {
                     }
                     else -> null
                 }
-//                val loc = locationAddress!!
+
                 val userAdd = Location("Cur_Loc")
                 println(locationAddress)
-                if ( locationAddress != null) {
-                    userAdd.latitude = locationAddress?.get(0)!!
-                    userAdd.longitude = locationAddress?.get(1)!!
-                }
-                else{
-                    userAdd.latitude = 14.57249771
-                    userAdd.longitude = 120.983662732
-                }
 
-                var vaccineCenters = ArrayList<Location>()
+                userAdd.latitude = locationAddress?.get(0) ?: 14.57249771
+                userAdd.longitude = locationAddress?.get(1) ?: 120.983662732
+
+                val vaccineCenters = ArrayList<Location>()
                 val query = DB.createEqualToQueries("vaccination centers", mutableListOf())
 
                 DB.readDocumentFromCollection(query) {
                     it.forEach { elem ->
-                        var loc = Location(elem.getString("name"))
+                        val loc = Location(elem.getString("name"))
                         loc.longitude = elem.getGeoPoint("location")?.longitude!!.toDouble()
                         loc.latitude = elem.getGeoPoint("location")?.latitude!!.toDouble()
                         vaccineCenters.add(loc)
 
                     }
 
-                    var distances = ArrayList<Float>()
+                    val distances = ArrayList<Float>()
 
                     vaccineCenters.forEach{elem ->
                         val diff = userAdd.distanceTo(elem)
@@ -261,7 +253,7 @@ class UserScreenActivity : AppCompatActivity() {
                             val document = ft.first();
                             if (document.contains("mobileNumber")) {
                                 val firstName = document.getString("firstName")
-                                val surname = document.getString("surName")
+                                val surname = document.getString("surname")
                                 val birthday = document.getString("birthday")
                                 val sex = document.getString("sex")
                                 val priority = document.getString("priorityGroup")
@@ -278,10 +270,11 @@ class UserScreenActivity : AppCompatActivity() {
                                     "assignedCenter" to assigned,
                                 ) as HashMap<String, Any>
                                 //create a hashmap here then
-                                DB.updateDocumentFromCollection(query, fields)
+                                DB.updateDocumentFromCollection(query, fields) {
+                                    User.location = assigned
+                                }
                                 println("saving")
                             }
-
                 }
 
             }

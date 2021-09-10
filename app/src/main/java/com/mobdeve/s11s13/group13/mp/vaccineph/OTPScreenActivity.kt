@@ -135,21 +135,10 @@ class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         val phoneAuthCredential = PhoneAuthProvider.getCredential(verificationId, otp)
         FirebaseAuth.getInstance().signInWithCredential(phoneAuthCredential)
             .addOnSuccessListener {
-                //assigns the mobile number of the user to a "static" variable in the UserData class for easy access
-                requireNotNull(intent.getStringExtra(KeyEnum.KEY_OTP.name)) {
-                    """KeyEnum.KEY_OTP.name is null, ensure all KeyEnums are defined in KeyEnum.kt
-                        |Or that the proper key was put when passing the intent
-                    """.trimMargin()
-                }
-                User.mobileNumber =
-                    intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!!
-
                 //adds the user's mobile number to the database
                 launchNextActivity()
                 object : CountDownTimer(1000, 3000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                    }
-
+                    override fun onTick(millisUntilFinished: Long) {}
                     override fun onFinish() {
                         endProgressBar()
                     }
@@ -158,9 +147,7 @@ class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             .addOnFailureListener {
                 errorToast.show()
                 object : CountDownTimer(1000, 3000) {
-                    override fun onTick(millisUntilFinished: Long) {
-                    }
-
+                    override fun onTick(millisUntilFinished: Long) {}
                     override fun onFinish() {
                         endProgressBar()
                     }
@@ -207,6 +194,15 @@ class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             } else {
                 //flag that the User is registered
                 User.isRegistered = true
+                //assigns the mobile number of the user to a "static" variable in the UserData class for easy access
+                requireNotNull(intent.getStringExtra(KeyEnum.KEY_OTP.name)) {
+                    """KeyEnum.KEY_OTP.name is null, ensure all KeyEnums are defined in KeyEnum.kt
+                        |Or that the proper key was put when passing the intent
+                    """.trimMargin()
+                }
+                User.mobileNumber =
+                    intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!!
+                User.location = it.first().getString("assignedCenter") ?: "dummy location"
                 startActivity(Intent(this, HomeScreenActivity::class.java))
             }
         }.addOnFailureListener {
@@ -214,4 +210,3 @@ class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
         }
     }
 }
-
