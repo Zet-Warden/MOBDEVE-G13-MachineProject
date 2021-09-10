@@ -1,7 +1,10 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.view.View
@@ -307,8 +310,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
                     var startDate = calendar.getTimeInMillis()
                     var endDate = startDate + 1000 //1000 milliseconds after
 
-                    deletePrevious()
                     addToCalendar(title, location, startDate, endDate)
+                    deletePrevious()
                 }
             }
         }
@@ -332,8 +335,29 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
     }
 
+    private fun getEventId(cr: ContentResolver) : Long {
+        val cursor = cr.query(CalendarContract.Events.CONTENT_URI, arrayOf<String>("MAX(_id) as max_id"), null, null, "_id")
+
+        if (cursor != null) {
+            cursor.moveToFirst()
+            return cursor.getLong(cursor.getColumnIndex("max_id"))
+        }
+
+        return -1
+    }
+
     private fun deletePrevious() {
         //check first if there is an event in the calendar with the same calendar id as the user's mobile number
         //then delete?
+        val cr = object : ContentResolver(this)
+        val id = getEventId(cr)
+
+        if (id != -1L) {
+            val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
+            val intent = Intent(Intent.ACTION_EDIT)
+                .setData(uri)
+                .putExtra(CalendarContract.Events.TITLE, "Foo New Title")
+            startActivity(intent)
+        }
     }
 }
