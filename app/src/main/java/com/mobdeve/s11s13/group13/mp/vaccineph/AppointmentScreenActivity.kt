@@ -1,7 +1,9 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
@@ -137,6 +139,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
             if (result) {
                 tvAppointmentDate.text = appointmentDate.toFormattedString()
                 toast.saveDateMessage.show()
+
+                addOrUpdateCalendar()
             } else {
                 resetToPrevAppointmentDate()
                 toast.appointmentFullMessage.show()
@@ -285,5 +289,51 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
         if (document.isEmpty) return null
         return document.first().getString("date")
+    }
+
+    private fun addOrUpdateCalendar() {
+        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+        DB.readDocumentFromCollection(query) {
+            if (!it.isEmpty) {
+                val document = it.first();
+                if (document.contains("mobileNumber")) {
+                    val firstName = document.getString("firstName")
+                    val surname = document.getString("surname")
+
+                    val title = "Vaccination of ${firstName} ${surname}"
+                    val location = User.location
+                    var calendar = Calendar()
+                    calendar.time = getAppointmentDate()
+                    var startDate = calendar.getTimeInMillis()
+                    var endDate = startDate + 1000 //1000 milliseconds after
+
+                    deletePrevious()
+                    addToCalendar(title, location, startDate, endDate)
+                }
+            }
+        }
+    }
+
+    private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long) {
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            data = CalendarContract.Events.CONTENT_URI
+            putExtra(CalendarContract.EXTRA_EVENT_ID, User.mobileNumber)
+            putExtra(CalendarContract.Events.TITLE, title)
+            putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startDate)
+            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endDate)
+            putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+            putExtra(CalendarContract.Events.HAS_ALARM, 1)
+            putExtra(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        }
+
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
+    private fun deletePrevious() {
+        //check first if there is an event in the calendar with the same calendar id as the user's mobile number
+        //then delete?
     }
 }
