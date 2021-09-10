@@ -2,9 +2,13 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import android.annotation.SuppressLint
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
+import android.provider.CalendarContract.Instances
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
@@ -15,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_appointment_screen.*
 import kotlinx.android.synthetic.main.activity_user_screen.view.*
 import kotlinx.coroutines.*
 import java.util.*
+
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
@@ -27,6 +32,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     // get a toast pool to choose different toast messages
     private lateinit var toast: ToastPool
+    private var calendarID: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -308,6 +314,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
                     var startDate = calendar.getTimeInMillis()
                     var endDate = startDate + 1000 //1000 milliseconds after
 
+
                     deletePrevious()
                     addToCalendar(title, location, startDate, endDate)
                 }
@@ -319,7 +326,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_INSERT).apply {
             //data = CalendarContract.Events.CONTENT_URI
             data = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, 1)
-            putExtra(CalendarContract.EXTRA_EVENT_ID, User.mobileNumber)
+            //putExtra(CalendarContract.EXTRA_EVENT_ID, User.mobileNumber)
+            //User.calendarID = 1L;
             putExtra(CalendarContract.Events.TITLE, title)
             putExtra(CalendarContract.Events.EVENT_LOCATION, location)
             putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startDate)
@@ -332,6 +340,21 @@ class AppointmentScreenActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
+
+        /*val values = ContentValues().apply {
+            put(CalendarContract.Events.TITLE, title)
+            put(CalendarContract.Events.EVENT_LOCATION, location)
+            put(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startDate)
+            put(CalendarContract.EXTRA_EVENT_END_TIME, endDate)
+            put(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+            put(CalendarContract.Events.HAS_ALARM, 1)
+            put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        }
+        val uri: Uri? = contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+
+        // get the event ID that is the last element in the Uri
+        calendarID = uri?.lastPathSegment?.toLong() ?: 0L
+        println("here: $calendarID")*/
     }
 
     private fun deletePrevious() {

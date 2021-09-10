@@ -4,4 +4,5 @@ object User {
     var mobileNumber = "+63917 844 2096"
     var location = "dummy location"
     var isRegistered = false
+    var calendarID = 0L
 }
