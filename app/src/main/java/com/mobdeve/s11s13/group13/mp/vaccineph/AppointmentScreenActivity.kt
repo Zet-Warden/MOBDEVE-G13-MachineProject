@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
@@ -38,6 +39,22 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
     // get a toast pool to choose different toast messages
     private lateinit var toast: ToastPool
+
+    private val activityResultLauncher = this.registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if(it.resultCode == RESULT_OK) {
+            //update the db to include the event id of the user's calendar event
+            val id = getEventId()
+            val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+
+            val field = hashMapOf(
+                "eventId" to id
+            ) as HashMap<String, Any>
+
+            DB.updateDocumentFromCollection(query, field)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -313,10 +330,10 @@ class AppointmentScreenActivity : AppCompatActivity() {
                     val surname = document.getString("surname")
                     val eventId = document.getLong("eventId") ?: -1
 
-                    val title = "Vaccination of ${firstName} ${surname}"
+                    val title = "Vaccination of $firstName $surname"
                     val location = User.location
-                    var startDate = getAppointmentDate().time
-                    var endDate = startDate + 1000 //1000 milliseconds after
+                    val startDate = getAppointmentDate().time
+                    val endDate = startDate + 1000 //1000 milliseconds after
 
                     addToCalendar(title, location, startDate, endDate, eventId)
                 }
@@ -343,50 +360,23 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
 
         if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+            activityResultLauncher.launch(intent)
         }
-
-        //update the db to include the event id of the user's calendar event
-        val id = getEventId()
-        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
-
-        val field = hashMapOf(
-            "eventId" to id
-        ) as HashMap<String, Any>
-
-        DB.updateDocumentFromCollection(query, field)
     }
 
     private fun deleteCalendarEvent(id: Long) {
-        var uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
-        var row = contentResolver.delete(uri, null, null)
-        println("Number of rows deleted: $row")
-
-            /*val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
-            val intent = Intent(Intent.ACTION_EDIT).apply {
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                data = uri
-                putExtra(CalendarContract.Events.TITLE, "aaaaaaaaaaaaaaaa putangina")
-                putExtra()
-                putExtra(CalendarContract.Events.DTSTART, startDate)
-                putExtra()
-                putExtra(CalendarContract.Events.DTEND, endDate)
-            }
-
-            if (intent.resolveActivity(packageManager) != null) {
-                startActivity(intent)
-            }*/
+        val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
+        contentResolver.delete(uri, null, null)
     }
 
 
     private fun getEventId() : Long {
-        val cursor = this.contentResolver.query(CalendarContract.Events.CONTENT_URI, arrayOf<String>("MAX(_id) as max_id"), null, null, "_id")
+        val cursor = this.contentResolver.query(CalendarContract.Events.CONTENT_URI, arrayOf("MAX(_id) as max_id"), null, null, "_id")
 
         if (cursor != null) {
             cursor.moveToFirst()
-            return cursor.getLong(cursor.getColumnIndex("max_id")) + 1
+            return cursor.getLong(cursor.getColumnIndex("max_id"))
         }
-
         return -1
     }
 }
