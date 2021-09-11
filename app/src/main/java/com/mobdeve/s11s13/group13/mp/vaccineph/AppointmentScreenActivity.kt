@@ -3,6 +3,7 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -14,7 +15,15 @@ import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnCalendar
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnHome
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnLocation
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnProfile
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnSave
+import kotlinx.android.synthetic.main.activity_appointment_screen.clMainContainer
+import kotlinx.android.synthetic.main.activity_user_screen.*
 import kotlinx.android.synthetic.main.activity_user_screen.view.*
+import kotlinx.android.synthetic.main.template_home_feed.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -302,25 +311,26 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 if (document.contains("mobileNumber")) {
                     val firstName = document.getString("firstName")
                     val surname = document.getString("surname")
+                    val eventId = document.getLong("eventId") ?: -1
 
                     val title = "Vaccination of ${firstName} ${surname}"
                     val location = User.location
-                    var calendar = Calendar()
-                    calendar.time = getAppointmentDate()
-                    var startDate = calendar.getTimeInMillis()
+                    var startDate = getAppointmentDate().time
                     var endDate = startDate + 1000 //1000 milliseconds after
 
-                    addToCalendar(title, location, startDate, endDate)
-                    deletePrevious()
+                    addToCalendar(title, location, startDate, endDate, eventId)
                 }
             }
         }
     }
 
-    private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long) {
+    private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long, eventId: Long) {
+        if (eventId != -1L) {
+            deleteCalendarEvent(eventId)
+        }
+
         val intent = Intent(Intent.ACTION_INSERT).apply {
             data = CalendarContract.Events.CONTENT_URI
-            putExtra(CalendarContract.EXTRA_EVENT_ID, User.mobileNumber)
             putExtra(CalendarContract.Events.TITLE, title)
             putExtra(CalendarContract.Events.EVENT_LOCATION, location)
             putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startDate)
@@ -333,31 +343,49 @@ class AppointmentScreenActivity : AppCompatActivity() {
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         }
+
+
+        val id = getEventId()
+
+        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+
+        val field = hashMapOf(
+            "eventId" to id
+        ) as HashMap<String, Any>
+
+        DB.updateDocumentFromCollection(query, field)
     }
 
-    private fun getEventId(cr: ContentResolver) : Long {
-        val cursor = cr.query(CalendarContract.Events.CONTENT_URI, arrayOf<String>("MAX(_id) as max_id"), null, null, "_id")
+    private fun deleteCalendarEvent(id: Long) {
+        var uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
+        var row = contentResolver.delete(uri, null, null)
+        println("Number of rows deleted: $row")
+
+            /*val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
+            val intent = Intent(Intent.ACTION_EDIT).apply {
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                data = uri
+                putExtra(CalendarContract.Events.TITLE, "aaaaaaaaaaaaaaaa putangina")
+                putExtra()
+                putExtra(CalendarContract.Events.DTSTART, startDate)
+                putExtra()
+                putExtra(CalendarContract.Events.DTEND, endDate)
+            }
+
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            }*/
+    }
+
+
+    private fun getEventId() : Long {
+        val cursor = this.contentResolver.query(CalendarContract.Events.CONTENT_URI, arrayOf<String>("MAX(_id) as max_id"), null, null, "_id")
 
         if (cursor != null) {
             cursor.moveToFirst()
-            return cursor.getLong(cursor.getColumnIndex("max_id"))
+            return cursor.getLong(cursor.getColumnIndex("max_id")) + 1
         }
 
         return -1
-    }
-
-    private fun deletePrevious() {
-        //check first if there is an event in the calendar with the same calendar id as the user's mobile number
-        //then delete?
-        val cr = object : ContentResolver(this)
-        val id = getEventId(cr)
-
-        if (id != -1L) {
-            val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
-            val intent = Intent(Intent.ACTION_EDIT)
-                .setData(uri)
-                .putExtra(CalendarContract.Events.TITLE, "Foo New Title")
-            startActivity(intent)
-        }
     }
 }
