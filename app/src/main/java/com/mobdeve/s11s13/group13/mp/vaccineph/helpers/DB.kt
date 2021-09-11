@@ -1,11 +1,13 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph.helpers
 
+import android.content.Context
+import android.net.ConnectivityManager
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.ktx.getField
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.appointmentscreenactivityhelper.AppointmentData
 import kotlinx.coroutines.tasks.await
-import java.lang.reflect.GenericArrayType
+
 
 object DB {
 

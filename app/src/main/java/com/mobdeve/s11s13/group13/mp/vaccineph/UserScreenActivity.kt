@@ -66,8 +66,12 @@ class UserScreenActivity : AppCompatActivity() {
                 toast.notOfAgeMessage.show()
             } else {
                 // add or update the database on save
-                saveToDatabase()
-                toast.successfulSaveMessage.show()
+                if (NetworkChecker.isNetworkAvailable(this)) {
+                    saveToDatabase()
+                    toast.successfulSaveMessage.show()
+                } else {
+                    toast.networkUnavailable.show()
+                }
             }
         }
     }
@@ -165,7 +169,7 @@ class UserScreenActivity : AppCompatActivity() {
 
         val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
         DB.readDocumentFromCollection(query) {
-            if(it.isEmpty) {
+            if (it.isEmpty) {
                 DB.createDocumentToCollection("users", fields) {
                     User.isRegistered = true
                     convertAddressAndAssign()
@@ -198,10 +202,11 @@ class UserScreenActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun convertAddressAndAssign() {
         val address = etAddress.text.toString()
         val location = GeoCodingLocation()
-        location.getAddressFromLocation(address,applicationContext,GeoCoderHandler())
+        location.getAddressFromLocation(address, applicationContext, GeoCoderHandler())
     }
 
     companion object {
@@ -239,7 +244,7 @@ class UserScreenActivity : AppCompatActivity() {
 
                     val distances = ArrayList<Float>()
 
-                    vaccineCenters.forEach{elem ->
+                    vaccineCenters.forEach { elem ->
                         val diff = userAdd.distanceTo(elem)
                         distances.add(diff)
                     }
@@ -247,8 +252,8 @@ class UserScreenActivity : AppCompatActivity() {
                     println(vaccineCenters[distances.indexOf(distances.minOrNull())].provider)
                     val assigned = vaccineCenters[distances.indexOf(distances.minOrNull())].provider
                     //TODO ADD ^ to current user as assigned center
-                    val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
-                    DB.readDocumentFromCollection(query){ ft ->
+                    val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+                    DB.readDocumentFromCollection(query) { ft ->
                         if (!ft.isEmpty) {
                             val document = ft.first();
                             if (document.contains("mobileNumber")) {
@@ -275,11 +280,11 @@ class UserScreenActivity : AppCompatActivity() {
                                 }
                                 println("saving")
                             }
-                }
+                        }
 
+                    }
+                }
             }
-        }
-    }
         }
     }
 }

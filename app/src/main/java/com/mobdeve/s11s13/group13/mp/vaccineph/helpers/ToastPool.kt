@@ -53,5 +53,12 @@ class ToastPool(context: Context) {
             "You appointment request is being processed. Please wait to select another appointment",
             Toast.LENGTH_SHORT
         )
+
+    val networkUnavailable: Toast =
+        Toast.makeText(
+            context,
+            "Network unavailable, try again later",
+            Toast.LENGTH_SHORT
+        )
     //endregion
 }

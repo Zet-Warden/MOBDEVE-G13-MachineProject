@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.activity_otp_screen.clMainContainer
 import kotlinx.android.synthetic.main.activity_otp_screen.pgProgressBar
 import java.util.concurrent.TimeUnit
 
-class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
+class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
     private var listOfOTPDigits = mutableListOf<EditText>()
     private lateinit var verificationId: String
 
@@ -83,7 +83,11 @@ class  OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             if (!isOTPDigitsCompletelyFilled()) {
                 toast.invalidOTPMessage.show()
             } else {
-                authenticate(toast.invalidOTPMessage)
+                if (NetworkChecker.isNetworkAvailable(this)) {
+                    authenticate(toast.invalidOTPMessage)
+                } else {
+                    toast.networkUnavailable.show()
+                }
             }
         }
     }

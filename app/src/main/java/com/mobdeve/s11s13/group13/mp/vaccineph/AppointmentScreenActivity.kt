@@ -30,20 +30,13 @@ import java.util.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
-    // represents the User's chosen date
-    // global variable bad, should be refactored into a local variable
-    // and be passed into necessary functions
-    // problem is at [saveToDatabase]
-
-    //private var appointmentDate: Date = Calendar().time
-
     // get a toast pool to choose different toast messages
     private lateinit var toast: ToastPool
 
     private val activityResultLauncher = this.registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        if(it.resultCode == RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             //update the db to include the event id of the user's calendar event
             val id = getEventId()
             val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
@@ -138,10 +131,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
      */
     private fun initSaveButton() {
         btnSave.setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                withContext(Dispatchers.Main) {
-                    saveButtonAction()
+            if (NetworkChecker.isNetworkAvailable(this)) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        saveButtonAction()
+                    }
                 }
+            } else {
+                toast.networkUnavailable.show()
             }
         }
     }
@@ -341,7 +338,13 @@ class AppointmentScreenActivity : AppCompatActivity() {
         }
     }
 
-    private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long, eventId: Long) {
+    private fun addToCalendar(
+        title: String,
+        location: String,
+        startDate: Long,
+        endDate: Long,
+        eventId: Long
+    ) {
         //if there is a previous event in the calendar, call the delete function
         if (eventId != -1L) {
             deleteCalendarEvent(eventId)
@@ -370,8 +373,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
 
-    private fun getEventId() : Long {
-        val cursor = this.contentResolver.query(CalendarContract.Events.CONTENT_URI, arrayOf("MAX(_id) as max_id"), null, null, "_id")
+    private fun getEventId(): Long {
+        val cursor = this.contentResolver.query(
+            CalendarContract.Events.CONTENT_URI,
+            arrayOf("MAX(_id) as max_id"),
+            null,
+            null,
+            "_id"
+        )
 
         if (cursor != null) {
             cursor.moveToFirst()
