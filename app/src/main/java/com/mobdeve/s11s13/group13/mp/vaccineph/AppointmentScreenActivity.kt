@@ -1,14 +1,13 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ContentResolver
-import android.content.ContentUris
-import android.content.ContentValues
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
@@ -46,6 +45,25 @@ class AppointmentScreenActivity : AppCompatActivity() {
             ) as HashMap<String, Any>
 
             DB.updateDocumentFromCollection(query, field)
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted
+                requestPermissionLauncher2.launch(Manifest.permission.READ_CALENDAR)
+            }
+        }
+
+    private val requestPermissionLauncher2 = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted
+            addOrUpdateCalendar()
         }
     }
 
@@ -166,7 +184,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
                 tvAppointmentDate.text = appointmentDate.toFormattedString()
                 toast.saveDateMessage.show()
 
-                addOrUpdateCalendar()
+                //requestPermissionLauncher.launch(Manifest.permission.READ_CALENDAR)
+                requestPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
             } else {
                 resetToPrevAppointmentDate()
                 toast.appointmentFullMessage.show()
@@ -318,6 +337,7 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     private fun addOrUpdateCalendar() {
+
         val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
         DB.readDocumentFromCollection(query) {
             if (!it.isEmpty) {
@@ -345,7 +365,6 @@ class AppointmentScreenActivity : AppCompatActivity() {
         endDate: Long,
         eventId: Long
     ) {
-        //if there is a previous event in the calendar, call the delete function
         if (eventId != -1L) {
             deleteCalendarEvent(eventId)
         }
