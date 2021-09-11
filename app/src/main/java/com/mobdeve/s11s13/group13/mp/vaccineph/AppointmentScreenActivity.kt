@@ -325,10 +325,12 @@ class AppointmentScreenActivity : AppCompatActivity() {
     }
 
     private fun addToCalendar(title: String, location: String, startDate: Long, endDate: Long, eventId: Long) {
+        //if there is a previous event in the calendar, call the delete function
         if (eventId != -1L) {
             deleteCalendarEvent(eventId)
         }
 
+        //add new calendar event
         val intent = Intent(Intent.ACTION_INSERT).apply {
             data = CalendarContract.Events.CONTENT_URI
             putExtra(CalendarContract.Events.TITLE, title)
@@ -344,9 +346,8 @@ class AppointmentScreenActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
+        //update the db to include the event id of the user's calendar event
         val id = getEventId()
-
         val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
 
         val field = hashMapOf(
