@@ -32,6 +32,7 @@ class MapsFragment : Fragment() {
     private var lat = 100.0
     private var long = 14.00
     private lateinit var map : GoogleMap
+    private var add = "Vaccine Center"
 
 
 
@@ -96,7 +97,7 @@ class MapsFragment : Fragment() {
                         if (document.contains("location")) {
                             lat = document.getGeoPoint("location")?.latitude?: 0.0
                             long = document.getGeoPoint("location")?.longitude?: 0.0
-
+                            add = document.getString("name")?:"Vaccine Center"
                             println(lat)
                             println(long)
                             changecamera()
@@ -110,7 +111,7 @@ class MapsFragment : Fragment() {
         map.animateCamera(CameraUpdateFactory.zoomTo(20.0f))
         val coords = LatLng(lat,long)
 
-        map.addMarker(MarkerOptions().position(coords).title("Vaccine Center"))
+        map.addMarker(MarkerOptions().position(coords).title(add))
         map.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(
