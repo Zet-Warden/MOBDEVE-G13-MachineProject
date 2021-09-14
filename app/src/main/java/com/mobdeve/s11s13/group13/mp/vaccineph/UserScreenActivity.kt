@@ -23,7 +23,6 @@ class UserScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_screen)
         init()
-
     }
 
     override fun onResume() {
@@ -198,6 +197,7 @@ class UserScreenActivity : AppCompatActivity() {
                     actvSex.setText(document.getString("sex"), false)
                     actvPriorityGroup.setText(document.getString("priorityGroup"), false)
                     etAddress.setText(document.getString("address"))
+                    etAddress.isEnabled = false
                 }
             }
         }
