@@ -116,6 +116,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:background="#FFFFFF"
         android:fontFamily="@font/montserrat_bold"
         android:text="Dummy Location"
         android:textAlignment="center"
