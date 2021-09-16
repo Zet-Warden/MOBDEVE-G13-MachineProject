@@ -3,14 +3,9 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -18,11 +13,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
-import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.GeoCodingLocation
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
-import kotlinx.android.synthetic.main.activity_user_screen.*
 
 class MapsFragment : Fragment() {
 
@@ -55,27 +47,35 @@ class MapsFragment : Fragment() {
 
 //        readDbfromCoords("Robinsons Place Manila")
 
-        val _query =
+        //check if user has an appointment set
+        val query =
             DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
 
-        val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
-
-        DB.readDocumentFromCollection(_query){
+        DB.readDocumentFromCollection(query){
             //no user appointment
+            var vaccineCenter : String?
             if(it.isEmpty) {
+                //since user has no appointment, display the assigned user center
+                val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
                 DB.readDocumentFromCollection(query) { otherIt ->
                     if (otherIt.first().contains("assignedCenter")){
-                        val center = otherIt.first().getString("assignedCenter")
-                        if (!center.equals(null))
-                            readDbfromCoords(center)
+                        vaccineCenter = otherIt.first().getString("assignedCenter")
+                        if (!vaccineCenter.equals(null))
+                            readDbfromCoords(vaccineCenter)
                         else{
                             changecamera()
                         }
                     }
                 }
             } else {
-                val location = it.first().getString("location") ?: "dummy location"
-                readDbfromCoords(location)
+                //since user has an appointment already set, display the center registered in that appointment
+                //the assigned center gets updated when the user reschedules their appointment
+                vaccineCenter = it.first().getString("location")
+                if (!vaccineCenter.equals(null))
+                    readDbfromCoords(vaccineCenter)
+                else{
+                    changecamera()
+                }
             }
         }
 
