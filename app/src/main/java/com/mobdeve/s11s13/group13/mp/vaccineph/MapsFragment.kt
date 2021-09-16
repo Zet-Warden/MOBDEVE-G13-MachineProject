@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
+import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsFragment : Fragment() {
 
@@ -53,7 +54,7 @@ class MapsFragment : Fragment() {
 
         DB.readDocumentFromCollection(query){
             //no user appointment
-            var vaccineCenter : String?
+            var vaccineCenter : String? = "Dummy Location"
             if(it.isEmpty) {
                 //since user has no appointment, display the assigned user center
                 val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
@@ -77,8 +78,7 @@ class MapsFragment : Fragment() {
                     changecamera()
                 }
             }
-
-
+            tvLocationName.text = vaccineCenter ?: "Dummy Location"
         }
 
     }
