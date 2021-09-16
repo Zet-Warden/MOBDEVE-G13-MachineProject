@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
-import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsFragment : Fragment() {
 
@@ -26,8 +25,6 @@ class MapsFragment : Fragment() {
     private var long = 14.00
     private lateinit var map : GoogleMap
     private var add = "Vaccine Center"
-
-
 
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -78,7 +75,6 @@ class MapsFragment : Fragment() {
                     changecamera()
                 }
             }
-            tvLocationName.text = ""//vaccineCenter ?: "Dummy Location"
         }
 
     }
