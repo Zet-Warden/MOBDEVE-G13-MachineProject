@@ -195,6 +195,7 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             // check if the User is seen in the database
             if (it.isEmpty) {
                 startActivity(Intent(this, UserScreenActivity::class.java))
+                finish()
             } else {
                 //flag that the User is registered
                 User.isRegistered = true
@@ -208,6 +209,7 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
                     intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!!
                 User.location = it.first().getString("assignedCenter") ?: "dummy location"
                 startActivity(Intent(this, HomeScreenActivity::class.java))
+                finish()
             }
         }.addOnFailureListener {
             println(it.message)
