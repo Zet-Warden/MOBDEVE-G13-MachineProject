@@ -8,7 +8,7 @@ object HomeFeedDataGenerator {
         var info1 = "Carry a mask that covers your nose and mouth.\n" +
                 "Prepare proof of your vaccine appointment as well as your valid ID.\n" +
                 "Wear loose or short sleeves that can be rolled up easily\n" +
-                "Cancel your appointment if you have COVID-19 or the symptoms.\n"
+                "Cancel your appointment if you have COVID-19 or the symptoms."
 
         var info2 = "Keep your mask on at all times.\n" +
                 "Don't touch your mask once it's on and properly fitted.\n" +
@@ -21,7 +21,7 @@ object HomeFeedDataGenerator {
                 "Avoid smoking.\n" +
                 "Care for the arm where your vaccine was injected.\n" +
                 "Put your second vaccination appointment in your calendar.\n" +
-                "Keep up preventive behaviours.\n"
+                "Keep up preventive behaviours."
 
         info1 = info1.replace("\n", "\n\n")
         info2 = info2.replace("\n", "\n\n")
