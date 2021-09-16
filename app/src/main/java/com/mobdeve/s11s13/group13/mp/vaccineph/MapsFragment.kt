@@ -54,15 +54,28 @@ class MapsFragment : Fragment() {
         //TODO Implement GetAssignedCenter ( gets which vacc center user is assigned to)
 
 //        readDbfromCoords("Robinsons Place Manila")
+
+        val _query =
+            DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
+
         val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
-        DB.readDocumentFromCollection(query){
-            if (it.first().contains("assignedCenter")){
-                var center = it.first().getString("assignedCenter")
-                if (!center.equals(null))
-                    readDbfromCoords(center)
-                else{
-                    changecamera()
+
+        DB.readDocumentFromCollection(_query){
+            //no user appointment
+            if(it.isEmpty) {
+                DB.readDocumentFromCollection(query) { otherIt ->
+                    if (otherIt.first().contains("assignedCenter")){
+                        val center = otherIt.first().getString("assignedCenter")
+                        if (!center.equals(null))
+                            readDbfromCoords(center)
+                        else{
+                            changecamera()
+                        }
+                    }
                 }
+            } else {
+                val location = it.first().getString("location") ?: "dummy location"
+                readDbfromCoords(location)
             }
         }
 
