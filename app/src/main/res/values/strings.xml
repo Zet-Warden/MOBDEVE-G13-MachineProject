@@ -11,6 +11,9 @@
         Sanitize or wash your hands after touching door handles, surfaces or furniture.\n
         Don’t touch your face.\n
     </string>
+    <string name="change_address_warning">
+        Note: You will need to reschedule your appointment if you wish to change your assigned vaccination center to the nearest one.
+    </string>
 
     <string-array name="sex_selection">
         <item>Male</item>
