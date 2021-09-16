@@ -18,12 +18,71 @@ import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import kotlinx.android.synthetic.main.activity_maps.*
 
 class MapsFragment : Fragment() {
+
+
     private val db = FirebaseFirestore.getInstance()
     private val collectionName = "vaccination centers"
     private var lat = 100.0
     private var long = 14.00
     private lateinit var map : GoogleMap
     private var add = "Vaccine Center"
+
+
+
+
+    private val callback = OnMapReadyCallback { googleMap ->
+        /**
+         * Manipulates the map once available.
+         * This callback is triggered when the map is ready to be used.
+         * This is where we can add markers or lines, add listeners or move the camera.
+         * In this case, we just add a marker near Sydney, Australia.
+         * If Google Play services is not installed on the device, the user will be prompted to
+         * install it inside the SupportMapFragment. This method will only be triggered once the
+         * user has installed Google Play services and returned to the app.
+         */
+        map = googleMap
+        googleMap.setMinZoomPreference(15.0f)
+        googleMap.setMaxZoomPreference(20.0f)
+
+        //TODO Implement GetAssignedCenter ( gets which vacc center user is assigned to)
+
+//        readDbfromCoords("Robinsons Place Manila")
+
+        //check if user has an appointment set
+        val query =
+            DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
+
+        DB.readDocumentFromCollection(query){
+            //no user appointment
+            var vaccineCenter : String? = "Dummy Location"
+            if(it.isEmpty) {
+                //since user has no appointment, display the assigned user center
+                val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
+                DB.readDocumentFromCollection(query) { otherIt ->
+                    if (otherIt.first().contains("assignedCenter")){
+                        vaccineCenter = otherIt.first().getString("assignedCenter")
+                        if (!vaccineCenter.equals(null))
+                            readDbfromCoords(vaccineCenter)
+                        else{
+                            changecamera()
+                        }
+                    }
+                }
+            } else {
+                //since user has an appointment already set, display the center registered in that appointment
+                //the assigned center gets updated when the user reschedules their appointment
+                vaccineCenter = it.first().getString("location")
+                if (!vaccineCenter.equals(null))
+                    readDbfromCoords(vaccineCenter)
+                else{
+                    changecamera()
+                }
+            }
+            tvLocationName.text = ""//vaccineCenter ?: "Dummy Location"
+        }
+
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,60 +96,6 @@ class MapsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-
-       val callback = OnMapReadyCallback { googleMap ->
-            /**
-             * Manipulates the map once available.
-             * This callback is triggered when the map is ready to be used.
-             * This is where we can add markers or lines, add listeners or move the camera.
-             * In this case, we just add a marker near Sydney, Australia.
-             * If Google Play services is not installed on the device, the user will be prompted to
-             * install it inside the SupportMapFragment. This method will only be triggered once the
-             * user has installed Google Play services and returned to the app.
-             */
-            map = googleMap
-            googleMap.setMinZoomPreference(15.0f)
-            googleMap.setMaxZoomPreference(20.0f)
-
-            //TODO Implement GetAssignedCenter ( gets which vacc center user is assigned to)
-
-//        readDbfromCoords("Robinsons Place Manila")
-
-            //check if user has an appointment set
-            val query =
-                DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
-
-            DB.readDocumentFromCollection(query){
-                //no user appointment
-                var vaccineCenter : String? = "Dummy Location"
-                if(it.isEmpty) {
-                    //since user has no appointment, display the assigned user center
-                    val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
-                    DB.readDocumentFromCollection(query) { otherIt ->
-                        if (otherIt.first().contains("assignedCenter")){
-                            vaccineCenter = otherIt.first().getString("assignedCenter")
-                            if (!vaccineCenter.equals(null))
-                                readDbfromCoords(vaccineCenter)
-                            else{
-                                changecamera()
-                            }
-                        }
-                    }
-                } else {
-                    //since user has an appointment already set, display the center registered in that appointment
-                    //the assigned center gets updated when the user reschedules their appointment
-                    vaccineCenter = it.first().getString("location")
-                    if (!vaccineCenter.equals(null))
-                        readDbfromCoords(vaccineCenter)
-                    else{
-                        changecamera()
-                    }
-                }
-                tvLocationName.text = ""//vaccineCenter ?: "Dummy Location"
-            }
-
-        }
-
         mapFragment?.getMapAsync(callback)
     }
 
