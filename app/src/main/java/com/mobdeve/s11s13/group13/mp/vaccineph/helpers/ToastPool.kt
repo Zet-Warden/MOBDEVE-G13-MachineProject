@@ -33,7 +33,7 @@ class ToastPool(context: Context) {
     //region Toasts for AppointmentScreenActivity
     val saveDateMessage: Toast = Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT)
     val invalidDateMessage: Toast =
-        Toast.makeText(context, "Invalid, resetting date", Toast.LENGTH_SHORT)
+        Toast.makeText(context, "Appointment must be at least two day from now", Toast.LENGTH_SHORT)
     val appointmentFullMessage: Toast =
         Toast.makeText(
             context,
