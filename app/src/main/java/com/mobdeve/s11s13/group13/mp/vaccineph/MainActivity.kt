@@ -34,24 +34,6 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         init()
-
-        /*
-        val requestPermissionLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean ->
-                if (isGranted) {
-                    // Permission is granted
-
-                } else {
-                    // end app activity lol
-                    finish()
-                }
-
-            }
-        requestPermissionLauncher.launch(
-            Manifest.permission.READ_CALENDAR
-        )*/
     }
 
     private fun init() {
@@ -107,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                         endProgressBar()
                     }
                 }.start()
+                finish()
             }
         }
 
