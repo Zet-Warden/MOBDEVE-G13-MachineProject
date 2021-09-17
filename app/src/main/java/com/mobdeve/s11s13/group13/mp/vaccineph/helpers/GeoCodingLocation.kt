@@ -24,16 +24,18 @@ class GeoCodingLocation {
             override fun run() {
                 val geocoder = Geocoder(context)
 
-                var result : String? = null
+                var result : DoubleArray? = null
+
                 println("Present: " +Geocoder.isPresent())
                 try {
                     val addressList = geocoder.getFromLocationName(locationAddress, 1)
                     if (addressList != null && addressList.size > 0) {
-                        val address = addressList.get(0) as Address
-                        val sb = StringBuilder()
-                        sb.append(address.latitude).append("\n")
-                        sb.append(address.longitude).append("\n")
-                        result = sb.toString()
+                        val address = addressList[0] as Address
+
+                        var coords = DoubleArray(2)
+                        coords[0] = address.latitude
+                        coords[1] = address.longitude
+                        result = coords
                     }
                 } catch (e: IOException) {
                     Log.e(TAG, "Unable to connect to GeoCoder", e)
@@ -44,7 +46,8 @@ class GeoCodingLocation {
                     val bundle = Bundle()
 //                    result = ("Address: $locationAddress" +
 //                            "\n\nLatitude and Longitude: \n" + result)
-                    bundle.putString("address", result)
+                    bundle.putDoubleArray("address", result)
+
                     message.data = bundle
                     message.sendToTarget()
                 }

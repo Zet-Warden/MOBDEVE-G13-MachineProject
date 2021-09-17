@@ -65,6 +65,7 @@
         app:cornerRadius="100dp"
         app:layout_constraintBottom_toTopOf="@+id/hdNavBar"
         app:layout_constraintEnd_toEndOf="@+id/btnLocation"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/btnHome"
         app:layout_constraintTop_toBottomOf="@+id/tvAppointmentDate" />
 

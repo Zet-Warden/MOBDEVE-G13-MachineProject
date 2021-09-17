@@ -1,2 +1,3 @@
 rootProject.name = "Machine Project Test"
 include ':app'
+

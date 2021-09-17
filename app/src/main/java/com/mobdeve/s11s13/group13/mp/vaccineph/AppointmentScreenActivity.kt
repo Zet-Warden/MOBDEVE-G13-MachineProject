@@ -1,30 +1,71 @@
 package com.mobdeve.s11s13.group13.mp.vaccineph
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.*
+import android.net.Uri
 import android.os.Bundle
+import android.provider.CalendarContract
 import android.view.View
-import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.mobdeve.s11s13.group13.mp.vaccineph.extensions.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.*
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.NavBarLinker
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.navbarhelper.ViewLinker
 import kotlinx.android.synthetic.main.activity_appointment_screen.*
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnCalendar
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnHome
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnLocation
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnProfile
+import kotlinx.android.synthetic.main.activity_appointment_screen.btnSave
+import kotlinx.android.synthetic.main.activity_appointment_screen.clMainContainer
+import kotlinx.android.synthetic.main.activity_user_screen.*
 import kotlinx.android.synthetic.main.activity_user_screen.view.*
+import kotlinx.android.synthetic.main.template_home_feed.*
 import kotlinx.coroutines.*
 import java.util.*
 
 class AppointmentScreenActivity : AppCompatActivity() {
 
-    // represents the User's chosen date
-    // global variable bad, should be refactored into a local variable
-    // and be passed into necessary functions
-    // problem is at [saveToDatabase]
-
-    //private var appointmentDate: Date = Calendar().time
-
     // get a toast pool to choose different toast messages
     private lateinit var toast: ToastPool
+
+    private val activityResultLauncher = this.registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == RESULT_OK) {
+            //update the db to include the event id of the user's calendar event
+            val id = getEventId()
+            val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+
+            val field = hashMapOf(
+                "eventId" to id
+            ) as HashMap<String, Any>
+
+            DB.updateDocumentFromCollection(query, field)
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission is granted
+                requestPermissionLauncher2.launch(Manifest.permission.READ_CALENDAR)
+            }
+        }
+
+    private val requestPermissionLauncher2 = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted
+            addOrUpdateCalendar()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,10 +149,14 @@ class AppointmentScreenActivity : AppCompatActivity() {
      */
     private fun initSaveButton() {
         btnSave.setOnClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                withContext(Dispatchers.Main) {
-                    saveButtonAction()
+            if (NetworkChecker.isNetworkAvailable(this)) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        saveButtonAction()
+                    }
                 }
+            } else {
+                toast.networkUnavailable.show()
             }
         }
     }
@@ -138,6 +183,9 @@ class AppointmentScreenActivity : AppCompatActivity() {
             if (result) {
                 tvAppointmentDate.text = appointmentDate.toFormattedString()
                 toast.saveDateMessage.show()
+
+                //requestPermissionLauncher.launch(Manifest.permission.READ_CALENDAR)
+                requestPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR)
             } else {
                 resetToPrevAppointmentDate()
                 toast.appointmentFullMessage.show()
@@ -286,5 +334,77 @@ class AppointmentScreenActivity : AppCompatActivity() {
 
         if (document.isEmpty) return null
         return document.first().getString("date")
+    }
+
+    private fun addOrUpdateCalendar() {
+
+        val query = DB.createEqualToQuery("users", "mobileNumber" to User.mobileNumber)
+        DB.readDocumentFromCollection(query) {
+            if (!it.isEmpty) {
+                val document = it.first();
+                if (document.contains("mobileNumber")) {
+                    val firstName = document.getString("firstName")
+                    val surname = document.getString("surname")
+                    val eventId = document.getLong("eventId") ?: -1
+
+                    val title = "Vaccination of $firstName $surname"
+                    val location = User.location
+                    val startDate = getAppointmentDate().time
+                    val endDate = startDate + 1000 //1000 milliseconds after
+
+                    addToCalendar(title, location, startDate, endDate, eventId)
+                }
+            }
+        }
+    }
+
+    private fun addToCalendar(
+        title: String,
+        location: String,
+        startDate: Long,
+        endDate: Long,
+        eventId: Long
+    ) {
+        if (eventId != -1L) {
+            deleteCalendarEvent(eventId)
+        }
+
+        //add new calendar event
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            data = CalendarContract.Events.CONTENT_URI
+            putExtra(CalendarContract.Events.TITLE, title)
+            putExtra(CalendarContract.Events.EVENT_LOCATION, location)
+            putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startDate)
+            putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endDate)
+            putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
+            putExtra(CalendarContract.Events.HAS_ALARM, 1)
+            putExtra(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        }
+
+        if (intent.resolveActivity(packageManager) != null) {
+            activityResultLauncher.launch(intent)
+        }
+    }
+
+    private fun deleteCalendarEvent(id: Long) {
+        val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, id)
+        contentResolver.delete(uri, null, null)
+    }
+
+
+    private fun getEventId(): Long {
+        val cursor = this.contentResolver.query(
+            CalendarContract.Events.CONTENT_URI,
+            arrayOf("MAX(_id) as max_id"),
+            null,
+            null,
+            "_id"
+        )
+
+        if (cursor != null) {
+            cursor.moveToFirst()
+            return cursor.getLong(cursor.getColumnIndex("max_id"))
+        }
+        return -1
     }
 }

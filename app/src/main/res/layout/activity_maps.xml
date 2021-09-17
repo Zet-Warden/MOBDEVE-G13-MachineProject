@@ -111,4 +111,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tvLocationName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Dummy Location"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@+id/vgEnd"
+        app:layout_constraintStart_toStartOf="@+id/vgStart"
+        app:layout_constraintTop_toTopOf="@+id/fragmentContainerView2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
