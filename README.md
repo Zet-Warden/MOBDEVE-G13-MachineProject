@@ -12,10 +12,10 @@ by Group 13
 - [x] layout for otp screen
 - [x] layout for home screen
 - [x] layout for user info screen
-- [ ] layout for map screen
+- [x] layout for map screen
 - [x] layout for appointment screen
 - [x] OTP/login functionality
 - [x] online database
 - [x] user info functionality
-- [ ] google maps functionality
+- [x] google maps functionality
 - [x] calendar functionality
