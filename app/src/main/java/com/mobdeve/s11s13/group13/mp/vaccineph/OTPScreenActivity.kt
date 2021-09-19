@@ -195,6 +195,8 @@ class OTPScreenActivity : AppCompatActivity(), ViewRefocuser {
             // check if the User is seen in the database
             if (it.isEmpty) {
                 startActivity(Intent(this, UserScreenActivity::class.java))
+                User.mobileNumber =
+                    intent.getStringExtra(KeyEnum.KEY_MOBILE_NUMBER.name)!!
                 finish()
             } else {
                 //flag that the User is registered
