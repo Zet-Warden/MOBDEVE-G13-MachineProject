@@ -43,6 +43,7 @@ class MapsScreenActivity : AppCompatActivity() {
                 DB.readDocumentFromCollection(query) { otherIt ->
                     if (otherIt.first().contains("assignedCenter")){
                         vaccineCenter = otherIt.first().getString("assignedCenter")
+                        tvLocationName.text = vaccineCenter ?: "Dummy Location"
 
                     }
                 }
@@ -50,8 +51,9 @@ class MapsScreenActivity : AppCompatActivity() {
                 //since user has an appointment already set, display the center registered in that appointment
                 //the assigned center gets updated when the user reschedules their appointment
                 vaccineCenter = it.first().getString("location")
+                tvLocationName.text = vaccineCenter ?: "Dummy Location"
             }
-            tvLocationName.text = vaccineCenter ?: "Dummy Location"
+
         }
     }
 }
