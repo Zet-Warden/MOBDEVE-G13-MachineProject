@@ -2,6 +2,7 @@ package com.mobdeve.s11s13.group13.mp.vaccineph
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.DB
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.UIHider
 import com.mobdeve.s11s13.group13.mp.vaccineph.helpers.User
@@ -31,27 +32,29 @@ class MapsScreenActivity : AppCompatActivity() {
             NavBarLinker.createNavBarLinkPairs(btnHome, btnProfile, btnLocation, btnCalendar)
         )
 
+        tvLocationName.visibility = View.GONE
         val query =
             DB.createArrayContainsQuery("appointments", "mobileNumbers" to User.mobileNumber)
 
         DB.readDocumentFromCollection(query){
             //no user appointment
-            var vaccineCenter : String? = "Dummy Location"
+            var vaccineCenter : String?
             if(it.isEmpty) {
                 //since user has no appointment, display the assigned user center
                 val query = DB.createEqualToQuery("users","mobileNumber" to User.mobileNumber)
                 DB.readDocumentFromCollection(query) { otherIt ->
                     if (otherIt.first().contains("assignedCenter")){
                         vaccineCenter = otherIt.first().getString("assignedCenter")
-                        tvLocationName.text = vaccineCenter ?: "Dummy Location"
-
+                        tvLocationName.text = vaccineCenter
+                        tvLocationName.visibility = View.VISIBLE
                     }
                 }
             } else {
                 //since user has an appointment already set, display the center registered in that appointment
                 //the assigned center gets updated when the user reschedules their appointment
                 vaccineCenter = it.first().getString("location")
-                tvLocationName.text = vaccineCenter ?: "Dummy Location"
+                tvLocationName.text = vaccineCenter
+                tvLocationName.visibility = View.VISIBLE
             }
 
         }
