@@ -53,10 +53,18 @@
             android:name=".UserScreenActivity"
             android:screenOrientation="portrait">
 
+
+
         </activity>
         <activity
             android:name="com.mobdeve.s11s13.group13.mp.vaccineph.MainActivity"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
